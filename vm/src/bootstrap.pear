@@ -2473,12 +2473,57 @@
                 (here focus) (| in (& index index inner focus))
                 _ (crash "weird inner focus"))))))
           _ (crash "bad chapter focus")))
-        (code string) (:
-         is-escape (% event (pressed-key key) (key-escape? key) _ false)
-         (if is-escape
-          (& node (| code string) focus (| yield))
-          (: edited (handle-text-edit-with-cursor string 100000. focus event)
-           (& node (| code (.string edited)) focus (| here (.cursor edited))))))
+        (code string)
+         (cond
+          (% event (pressed-key key) (key-escape? key) _ false) (:
+           # "Escape exits the current node."
+           (& node (| code string) focus (| yield)))
+          (% event (char c) (= c "(") _ false) (:
+           # "Typing '(' auto-inserts a matching ')'. I do that by replaying
+              events for '(', ')', and a left-arrow press."
+           state1
+            (handle-text-edit-with-cursor string 100000. focus (| char "("))
+           state2
+            (handle-text-edit-with-cursor
+             (.string state1)
+             100000.
+             (.cursor state1)
+             (| char ")"))
+           state3
+            (handle-text-edit-with-cursor
+             (.string state2)
+             100000.
+             (.cursor state2)
+             (| pressed-key
+              (& keycode 263 control false shift false alt false)))
+           (& node (| code (.string state3)) focus (| here (.cursor state3))))
+          (if (% event (pressed-key k) (key-backspace? k) _ false)
+           (: active (.active focus)
+            (if
+             (and-3
+              (not (cursor-has-selection? focus))
+              (> active 0)
+              (< active (string-length string)))
+             (= (string-slice string (- active 1) (+ active 1)) "()")
+             false))
+           false)
+          (:
+           # "Pressing backspace between two parentheses like '(|)' removes
+              both. I do that by replaying events for backspace and delete."
+           state1
+            (handle-text-edit-with-cursor string 100000. focus event)
+           state2
+            (handle-text-edit-with-cursor
+             (.string state1)
+             100000.
+             (.cursor state1)
+             (| pressed-key
+              (& keycode 261 control false shift false alt false)))
+           (& node (| code (.string state2)) focus (| here (.cursor state2))))
+          else (:
+           edited
+            (handle-text-edit-with-cursor string 100000. focus event)
+           (& node (| code (.string edited)) focus (| here (.cursor edited)))))
         _ (crash "handle node type")
         )))
       (&
