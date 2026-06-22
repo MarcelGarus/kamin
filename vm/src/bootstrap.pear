@@ -1822,6 +1822,15 @@
         (= name "cond") (:
          _ (if (even? (array-length rest)) nil (crash "bad cond"))
          (crash "cond"))
+         (rec 0 (\ (rec i)
+          (if (= i (array-length rest))
+           (| crash (| value "no cond branch matched"))
+           (| switch (&
+            condition (analyze (array-get rest i))
+            cases ([]
+             (& variant "true" payload (| none) body (analyze (array-get rest (+ i 1))))
+             (& variant "false" payload (| none) body (rec (+ i 2))))
+            default (| some (| crash (| value "if on non-bool")))))))))
         (= name "\\") (:
          _ (if (= (array-length rest) 2) nil (crash "bad function"))
          arguments
