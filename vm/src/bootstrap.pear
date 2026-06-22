@@ -1821,7 +1821,6 @@
           default (| some (| crash (| value "if on non-bool"))))))
         (= name "cond") (:
          _ (if (even? (array-length rest)) nil (crash "bad cond"))
-         (crash "cond"))
          (rec 0 (\ (rec i)
           (if (= i (array-length rest))
            (| crash (| value "no cond branch matched"))
