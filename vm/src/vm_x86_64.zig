@@ -721,7 +721,7 @@ fn compute_node_regs(slots: []u64, at: *Index) u8 {
                 for (0..n) |_| _ = compute_node_regs(slots, at);
                 break :blk STACK;
             } else {
-                var max: u8 = 0;
+                var max: u8 = 1;
                 for (0..n) |i|
                     max = @max(max, @as(u8, @intCast(i)) +| compute_node_regs(slots, at));
                 break :blk max;
@@ -776,11 +776,8 @@ fn compute_node_regs(slots: []u64, at: *Index) u8 {
             compute_node_regs(slots, at),
             STACK,
         ),
-        .crash => also(
-            compute_node_regs(slots, at),
-            @as(u8, 0),
-        ),
-        .unreachable_ => 0,
+        .crash => compute_node_regs(slots, at),
+        .unreachable_ => 1,
     };
     header.regs = regs;
     slots[header_idx] = @bitCast(header);
