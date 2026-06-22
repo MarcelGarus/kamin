@@ -124,7 +124,7 @@ pub fn call(self: *Self, fun: Vm.Fun, args: []const Obj, fuel: *usize) error{ Un
 }
 
 pub fn garbage_collect(self: *Self, checkpoint: Heap.Checkpoint, keep: Obj) !Obj {
-    return try self.heap.garbage_collect(self.ally, checkpoint, keep);
+    return (try self.heap.garbage_collect(self.ally, checkpoint, keep)).keep;
 }
 
 pub fn deduplicate(self: *Self, checkpoint: Heap.Checkpoint, obj: Obj) !Obj {

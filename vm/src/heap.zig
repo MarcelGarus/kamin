@@ -289,7 +289,9 @@ pub fn deduplicate(heap: *Heap, ally: Ally, from: Checkpoint) !Map(Obj, Obj) {
     return map;
 }
 
-pub fn garbage_collect(heap: *Heap, ally: Ally, boundary: Checkpoint, keep: Obj) !Obj {
+pub const GcResult = struct { keep: Obj, stable_until: Word };
+
+pub fn garbage_collect(heap: *Heap, ally: Ally, boundary: Checkpoint, keep: Obj) !GcResult {
     mark(keep, boundary);
     return try heap.sweep(ally, keep, boundary);
 }
@@ -300,11 +302,14 @@ fn mark(obj: Obj, boundary: Checkpoint) void {
     header.marked = 1;
     if (header.is_inner == 1) for (obj.children()) |child| mark(child, boundary);
 }
-fn sweep(heap: *Heap, ally: Ally, keep: Obj, boundary: Checkpoint) !Obj {
+fn sweep(heap: *Heap, ally: Ally, keep: Obj, boundary: Checkpoint) !GcResult {
     var read = boundary.address;
     var write = boundary.address;
     var mapping = Map(Word, Word).empty;
     defer mapping.deinit(ally);
+    // The destination of the first object that actually moves. Live objects that
+    // are compacted without moving (read == write, i.e. before the first gap)
+    // keep their address; everything from here up is relocated.
     const heap_end = heap.checkpoint().address;
     while (read < heap_end) {
         // std.debug.print("read: {x} of {x}\n", .{read, heap_end});
@@ -315,6 +320,7 @@ fn sweep(heap: *Heap, ally: Ally, keep: Obj, boundary: Checkpoint) !Obj {
         } else {
             header.marked = 0;
             if (read != write) {
+                if (first_moved == null) first_moved = write;
                 if (header.is_inner == 1) {
                     for (0..header.num_words) |i| {
                         const ptr: *Word = @ptrFromInt(read + 8 * (1 + i));
@@ -329,7 +335,10 @@ fn sweep(heap: *Heap, ally: Ally, keep: Obj, boundary: Checkpoint) !Obj {
         }
     }
     heap.used = (write - @intFromPtr(heap.memory.ptr)) / 8;
-    return if (mapping.get(keep.address)) |mapped| .{ .address = mapped } else keep;
+    return .{
+        .stable_until = first_moved orelse write,
+        .keep = if (mapping.get(keep.address)) |mapped| .{ .address = mapped } else keep,
+    };
 }
 
 pub fn file_out(obj: Obj, ally: Ally, writer: *std.Io.Writer) !void {

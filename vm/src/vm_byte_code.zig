@@ -757,7 +757,7 @@ pub fn deduplicate(self: *Self, checkpoint: Heap.Checkpoint, obj: Obj) !Obj {
 }
 
 pub fn garbage_collect(self: *Self, checkpoint: Heap.Checkpoint, keep: Obj) !Obj {
-    const mapped = try self.heap.garbage_collect(self.ally, checkpoint, keep);
-    self.compiled_cache.remove_everything_after(checkpoint.address);
-    return mapped;
+    const result = try self.heap.garbage_collect(self.ally, checkpoint, keep);
+    self.compiled_cache.remove_everything_after(result.stable_until);
+    return result.keep;
 }

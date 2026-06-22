@@ -2373,9 +2373,9 @@ fn emit_expr_to_reg(sink: anytype, slots: []const u64, at: *Index, resolver: *Re
 // preventing unnecessary recompiles.
 
 pub fn garbage_collect(vm: *Self, checkpoint: Heap.Checkpoint, keep: Obj) !Obj {
-    const mapped = try vm.heap.garbage_collect(vm.ally, checkpoint, keep);
-    vm.jit_cache.remove_everything_after(checkpoint.address);
-    return mapped;
+    const result = try vm.heap.garbage_collect(vm.ally, checkpoint, keep);
+    vm.jit_cache.remove_everything_after(result.stable_until);
+    return result.keep;
 }
 
 pub fn deduplicate(vm: *Self, checkpoint: Heap.Checkpoint, obj: Obj) !Obj {
