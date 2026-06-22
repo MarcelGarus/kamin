@@ -310,6 +310,7 @@ fn sweep(heap: *Heap, ally: Ally, keep: Obj, boundary: Checkpoint) !GcResult {
     // The destination of the first object that actually moves. Live objects that
     // are compacted without moving (read == write, i.e. before the first gap)
     // keep their address; everything from here up is relocated.
+    var first_moved: ?Word = null;
     const heap_end = heap.checkpoint().address;
     while (read < heap_end) {
         // std.debug.print("read: {x} of {x}\n", .{read, heap_end});
