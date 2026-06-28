@@ -202,6 +202,7 @@
     empty (| none)
     (more m)
      (if (checker (.item m)) (| some index) (rec (.rest m) (+ index 1)))))))
+ all (\ (iter checker) (not (any iter (\ (x) (not (checker x))))))
 
  _ (assert (= (iter->array (array->iter ([] 1 2 3))) ([] 1 2 3)))
  _ (assert (= (iter->array (array->iter ([]))) ([])))
@@ -2109,6 +2110,88 @@
  _ (assert
   (= (.errors (eval-code "(: x 5 y)" base-env)) ([] "unknown name y")))
 
+ struct-has-field? (\ (value name)
+  (if (= (@kind value) (| struct))
+   (any (array->iter (@fields value)) (\ (f) (= (.name f) name)))
+   false))
+ valid-element? (\ (e)
+  (if (struct-has-field? e "draw")
+   (if (struct-has-field? e "width")
+    (if (struct-has-field? e "height")
+     (and
+      (= (@kind (@field e "width")) (| float))
+      (= (@kind (@field e "height")) (| float)))
+     false)
+    false)
+   false))
+ valid-draw-position? (\ (p)
+  (if (= (@kind p) (| struct))
+   (if (struct-has-field? p "x")
+    (if (struct-has-field? p "y")
+     (and
+      (= (@kind (@field p "x")) (| float))
+      (= (@kind (@field p "y")) (| float)))
+     false)
+    false)
+   false))
+ valid-byte? (\ (v)
+  (if (= (@kind v) (| int)) (and (>= v 0) (<= v 255)) false))
+ valid-color? (\ (c)
+  (if (= (@kind c) (| struct))
+   (if (struct-has-field? c "r")
+    (if (struct-has-field? c "g")
+     (if (struct-has-field? c "b")
+      (and-3
+       (valid-byte? (@field c "r"))
+       (valid-byte? (@field c "g"))
+       (valid-byte? (@field c "b")))
+      false)
+     false)
+    false)
+   false))
+ valid-path-segment? (\ (s)
+  (if (= (@kind s) (| enum))
+   (: v (@variant s)
+    (if (or (= v "move-to") (= v "line-to"))
+     (valid-draw-position? (@payload s))
+     false))
+   false))
+ valid-draw-path? (\ (p)
+  (if (= (@kind p) (| array)) (all (array->iter p) valid-path-segment?) false))
+ valid-draw? (\ (d)
+  (rec d (\ (recurse d)
+   (if (= (@kind d) (| enum))
+    (: v (@variant d)
+     (cond
+      (= v "nothing") true
+      (= v "all")
+       (: p (@payload d)
+        (if (= (@kind p) (| array)) (all (array->iter p) recurse) false))
+      (= v "fill-path")
+       (: p (@payload d)
+        (if (= (@kind p) (| struct))
+         (if (struct-has-field? p "path")
+          (if (struct-has-field? p "color")
+           (and
+            (valid-draw-path? (@field p "path"))
+            (valid-color? (@field p "color")))
+           false)
+          false)
+         false))
+      (= v "translate")
+       (: p (@payload d)
+        (if (= (@kind p) (| struct))
+         (if (struct-has-field? p "by")
+          (if (struct-has-field? p "what")
+           (and
+            (valid-draw-position? (@field p "by"))
+            (recurse (@field p "what")))
+           false)
+          false)
+         false))
+      else false))
+    false))))
+
  # "A computation cache is a tree mirroring the notebook:
     Cache = (| chapter ([] Cache) entry CacheEntry skip (&)),
       where chapters become chapters, code parts become entries, and other nodes
@@ -2248,6 +2331,27 @@
  _ (assert (= (any-to-string ([] 1 2)) "([] 1 2)"))
  _ (assert (= (any-to-string (\ (x y) x)) "(\\ (x y) ...)"))
  _ (assert (= (any-to-string (\ () 0)) "(\\ () ...)"))
+
+ # "Render a code block's result as a widget, but only if the cell explicitly
+    opts in by evaluating to `(| widget <element>)`, where <element> is a drawing
+    element `(& draw ... width ... height ...)`. If that element's draw tree is
+    well-formed for the host, render it; anything else — a value that is not a
+    `(| widget ...)`, a non-element payload, or a malformed draw tree — returns
+    (| none) so the block falls back to showing the value as text. The validation
+    runs inside the sandbox, so even a pathological draw tree can't crash the
+    notebook — it just falls back."
+ result-widget (\ (value)
+  (if (= (@kind value) (| enum))
+   (if (= (@variant value) "widget")
+    (% (@sandbox run-fuel (\ () (:
+        element (@payload value)
+        (if (valid-element? element)
+         (if (valid-draw? (.draw element)) (| some element) (| none))
+         (| none)))))
+     (returned r) r
+     _ (| none))
+    (| none))
+   (| none)))
 
  notebook-app (&
   create (\ (book)
@@ -2605,7 +2709,10 @@
          outside (text string green)))
       run-element
        (% (.result evald)
-        (ok value) (text (any-to-string value) blue)
+        (ok value)
+         (% (result-widget value)
+          (some element) element
+          none (text (any-to-string value) blue))
         (error value) (text (any-to-string value) red)
         timeout (text "timeout" yellow)
         empty (text "" black))
@@ -2671,11 +2778,13 @@
 ===
 
 General TODO:
+- mouse input
+- animation
+- cancelable multithreading (or first-class computations or something like that)
 - add if and cond to the IR?
 - syncing data between devices
 - provide optimize function that is then applied to every Pear function
 - add more comments/documentation to bootstrapping pipeline
-- add asserts to bootstrapping pipeline
 - sort struct fields?
 - first person ("I") in error messages?
 - make optimization cheaper: no inlining if pear had the chance to optimize, etc.
