@@ -11,18 +11,13 @@ The most interesting bits:
   [vm/](vm/) contains the VM, written in Zig.  
   [vm/src/vm_interpreter.zig](vm/src/vm_interpreter.zig) contains the core interpreter.  
   [vm/src/vm_x86_64.zig](vm/src/vm_x86_64.zig) contains a JIT compiler.  
-- **Sloe** (Small Lisp Of Expressions):
-  A Lisp that is very small, and therefore easy to implement.  
-  [vm/src/sloe_compiler.zig](vm/src/sloe_compiler.zig) contains a Sloe compiler written in Zig.  
-  [vm/src/code.sloe](vm/src/code.sloe) contains Sloe code.
 - **Olive** (Optimizable Lisp Implementing Various Expressions):
   A Lisp where the focus is to be easy to optimize.
-  It has no first-class functions and no pre-compiled instruction-blobs – just a few builtin operations and first-class functions that call each other.  
-  [vm/src/code.sloe](vm/src/code.sloe) contains an Olive compiler written in Sloe.
-  [vm/src/code.olive](vm/src/code.olive) contains Olive code, including an Olive compiler written in Olive.
+  [vm/src/bootstrap.objects](vm/src/bootstrap.objects) contains an Olive compiler written in raw objects.
+  [vm/src/bootstrap.olive](vm/src/bootstrap.olive) contians an optimizing Olive compiler written in Olive.
 - **Pear**:
-  A functional programming language that is basically just the untyped lambda calculus with Lisp syntax.  
-  [pear/](pear/) contains Pear code.
+  A memory-safe functional programming language with Lisp syntax.  
+  [vm/src/bootstrap.pear](vm/src/bootstrap.pear) contains Pear code.
 - **Ground**:
   A low-level stack-based byte code.  
   [ground/readme.md](ground/readme.md) contains the specification.  

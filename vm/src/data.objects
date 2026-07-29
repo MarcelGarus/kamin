@@ -30,1068 +30,1631 @@ ac (aa ab)
 ad "Welcome to Orchard!"
 ae (i ad)
 af (ac ae)
-ag "text"
-ah (n ag)
-ai "string"
-aj (ai)
-ak "I believe programming should be more personal. Currently (2026), software tools are mostly developed by a few people in a central place and then used by many more people. However, you very rarely modify or customize your software tools. Even experienced programmers using open-source tools rarely look at the source code."
-al (aj ak)
-am (ah al)
-an "enum"
-ao "text"
-ap (an ao)
-aq "The current state is practical: It takes a lot of effort to build software, so naturally you need to bundle resources to create big projects. I like that this necessity to collaborate fosters social relationships and gets people to explore problem spaces together. However, there is also a place for more personal, customized, specialized, smaller software. This vision existed since the early days of computing: Alan Kay envisioned computers as \"personal dynamic media\", where every user feels comfortable to create, use, and customize tools. Orchard is my attempt at creating a personal computing medium."
-ar (aj aq)
-as (ap ar)
-at "enum"
-au "chapter"
-av (at au)
-aw "struct"
-ax "title"
-ay "parts"
-az (aw ax ay)
-ba "string"
-bb (ba)
-bc "the values"
-bd (bb bc)
-be "array"
-bf (be)
-bg "text"
-bh (at bg)
-bi "string"
-bj (bi)
-bk "todo: describe"
-bl (bj bk)
-bm (bh bl)
-bn (bf bm)
-bo (az bd bn)
-bp (av bo)
-bq "enum"
-br "chapter"
-bs (bq br)
-bt "struct"
-bu "title"
-bv "parts"
-bw (bt bu bv)
-bx "the vm"
-by (bb bx)
-bz "array"
-ca (bz)
-cb "enum"
-cc "text"
-cd (cb cc)
-ce "string"
-cf (ce)
-cg "todo: write"
-ch (cf cg)
-ci (cd ch)
-cj (ca ci)
-ck (bw by cj)
-cl (bs ck)
-cm (z af am as bp cl)
-cn (t x cm)
-co (p cn)
-cp "standard library"
-cq (cf cp)
-cr "enum"
-cs "text"
-ct (cr cs)
-cu "string"
-cv (cu)
-cw "Hi there! This is the standard library."
-cx (cv cw)
-cy (ct cx)
-cz "chapter"
-da (an cz)
-db "struct"
-dc "title"
-dd "parts"
-de (db dc dd)
-df "string"
-dg (df)
-dh "nil"
-di (dg dh)
-dj "array"
+ag "enum"
+ah "text"
+ai (ag ah)
+aj "string"
+ak (aj)
+al "I believe programming should be more personal. Currently (2026), software tools are mostly developed by a few people in a central place and then used by many more people. However, you very rarely modify or customize your software tools. Even experienced programmers using open-source tools rarely look at the source code."
+am (ak al)
+an (ai am)
+ao "enum"
+ap "text"
+aq (ao ap)
+ar "The current state is practical: It takes a lot of effort to build software, so naturally you need to bundle resources to create big projects. I like that this necessity to collaborate fosters social relationships and gets people to explore problem spaces together. However, there is also a place for more personal, customized, specialized, smaller software. This vision existed since the early days of computing: Alan Kay envisioned computers as \"personal dynamic media\", where every user feels comfortable to create, use, and customize tools. Orchard is my attempt at creating a personal computing medium."
+as (ak ar)
+at (aq as)
+au "enum"
+av "chapter"
+aw (au av)
+ax "struct"
+ay "title"
+az "parts"
+ba (ax ay az)
+bb "string"
+bc (bb)
+bd "the values"
+be (bc bd)
+bf "array"
+bg (bf)
+bh "text"
+bi (au bh)
+bj "string"
+bk (bj)
+bl "todo: describe"
+bm (bk bl)
+bn (bi bm)
+bo (bg bn)
+bp (ba be bo)
+bq (aw bp)
+br "enum"
+bs "chapter"
+bt (br bs)
+bu "struct"
+bv "title"
+bw "parts"
+bx (bu bv bw)
+by "the vm"
+bz (bc by)
+ca "array"
+cb (ca)
+cc "enum"
+cd "text"
+ce (cc cd)
+cf "string"
+cg (cf)
+ch "todo: write"
+ci (cg ch)
+cj (ce ci)
+ck (cb cj)
+cl (bx bz ck)
+cm (bt cl)
+cn (z af an at bq cm)
+co (t x cn)
+cp (p co)
+cq "enum"
+cr "chapter"
+cs (cq cr)
+ct "struct"
+cu "title"
+cv "parts"
+cw (ct cu cv)
+cx "standard library"
+cy (cg cx)
+cz "array"
+da (cz)
+db "enum"
+dc "text"
+dd (db dc)
+de "string"
+df (de)
+dg "Hi there! This is the standard library."
+dh (df dg)
+di (dd dh)
+dj "string"
 dk (dj)
-dl "Nil is used whenever we don't actually want to provide a useful value. Functions that only have side-effects (aka they may crash or hang) return nil. See the assert function for an example."
-dm (aj dl)
-dn (ap dm)
-do "enum"
-dp "code"
-dq (do dp)
-dr "nil (&)"
-ds (dg dr)
-dt (dq ds)
-du (dk dn dt)
-dv (de di du)
-dw (da dv)
-dx "enum"
-dy "chapter"
-dz (dx dy)
-ea "struct"
-eb "title"
-ec "parts"
-ed (ea eb ec)
-ee "crash & assert"
-ef (dg ee)
-eg "array"
-eh (eg)
-ei "crash (\\ (error) (@crash error))"
-ej (dg ei)
-ek (dq ej)
-el "assert (\\ (check) (if check nil (crash \"Assert failed.\")))"
-em (dg el)
-en (dq em)
-eo "enum"
-ep "code"
-eq (eo ep)
-er "string"
-es (er)
-et "todo (\\ (task) (crash (| todo task)))"
-eu (es et)
-ev (eq eu)
-ew "enum"
-ex "code"
-ey (ew ex)
-ez "string"
-fa (ez)
-fb "(crash \"hi\")"
-fc (fa fb)
-fd (ey fc)
-fe "(assert (| true))"
-ff (fa fe)
-fg (ey ff)
-fh "(assert (| false))"
-fi (fa fh)
-fj (ey fi)
-fk "code"
-fl (dx fk)
-fm "string"
-fn (fm)
-fo "(todo \"hi\")"
-fp (fn fo)
-fq (fl fp)
-fr (eh ek en ev fd fg fj fq)
-fs (ed ef fr)
-ft (dz fs)
-fu "kind reflection"
-fv (es fu)
-fw "text"
-fx (dx fw)
-fy "The kind of a value is sort of like its top-level type: int, float, string, struct, enum, or function."
-fz (fn fy)
-ga (fx fz)
-gb "kind (\\ (value) (@kind value))"
-gc (es gb)
-gd (eq gc)
-ge "(kind 2)"
-gf (es ge)
-gg (eq gf)
-gh "(kind 2.)"
-gi (es gh)
-gj (eq gi)
-gk "(kind \"hello\")"
-gl (es gk)
-gm (eq gl)
-gn "(kind (& x 1 y 2))"
-go (es gn)
-gp (eq go)
-gq "(kind (| some 3))"
-gr (es gq)
-gs (eq gr)
-gt "(kind (\\ () 2))"
-gu (es gt)
-gv (eq gu)
-gw (eh ga gd gg gj gm gp gs gv)
-gx (ed fv gw)
-gy (dz gx)
-gz "string"
-ha (gz)
-hb "recursive helpers"
-hc (ha hb)
-hd "Functions can't refer to themselves while they're being defined. So, in order to support generic functions, I define a rec function that allows you to write a function that calls itself."
-he (fn hd)
-hf (fx he)
-hg "You use the recursive functions like this:"
-hh (fn hg)
-hi (fx hh)
-hj "(rec initial-state (\\ (rec state) <code>))"
-hk (fn hj)
-hl (fx hk)
-hm "Where the <code> can just return a value or call (rec foo) to invoke itself again."
-hn (fn hm)
-ho (fx hn)
-hp "enum"
-hq "code"
-hr (hp hq)
-hs "rec (\\ (input function) (:\n  rec (\\ (rec input) (function (\\ (new) (rec rec new)) input))\n  (rec rec input)))"
-ht (ha hs)
-hu (hr ht)
-hv "rec-2 (\\ (a b function) (:\n  rec (\\ (rec a b) (function (\\ (a b) (rec rec a b)) a b))\n  (rec rec a b)))"
-hw (ha hv)
-hx (hr hw)
-hy "enum"
-hz "code"
-ia (hy hz)
-ib "string"
-ic (ib)
-id "rec-3 (\\ (a b c function) (:\n  rec (\\ (rec a b c) (function (\\ (a b c) (rec rec a b c)) a b c))\n  (rec rec a b c)))"
-ie (ic id)
-if (ia ie)
-ig "rec-4 (\\ (a b c d function) (:\n  rec (\\ (rec a b c d) (function (\\ (a b c d) (rec rec a b c d)) a b c d))\n  (rec rec a b c d)))"
-ih (ic ig)
-ii (ia ih)
-ij (eh hf hi hl ho hu hx if ii)
-ik (ed hc ij)
-il (dz ik)
-im "booleans"
-in (dg im)
-io "enum"
-ip "text"
-iq (io ip)
-ir "string"
-is (ir)
-it "Booleans are not built into the language, they are just enum values:"
-iu (is it)
-iv (iq iu)
-iw "true (| true)"
-ix (ha iw)
-iy (hr ix)
-iz "false (| false)"
-ja (ha iz)
-jb (hr ja)
-jc "enum"
-jd "text"
-je (jc jd)
-jf "string"
-jg (jf)
-jh "Now that we have booleans, ifs work!"
-ji (jg jh)
-jj (je ji)
-jk "enum"
-jl "code"
-jm (jk jl)
-jn "string"
-jo (jn)
-jp "(if true 2 3)"
-jq (jo jp)
-jr (jm jq)
-js "code"
-jt (jc js)
-ju "(if false 2 3)"
-jv (jg ju)
-jw (jt jv)
-jx "For cond expressions, it's typical to have a catch-all at the end. Here, I define else so I can just use else for that."
-jy (aj jx)
-jz (ap jy)
-ka "else true"
-kb (ha ka)
-kc (hr kb)
-kd "Now, the typical boolean and, or, not functions. However, because Pear has no variadic functions, there are also variants that operate on a different number of arguments."
-ke (aj kd)
-kf (ap ke)
-kg "and (\\ (a b) (if a b false))"
-kh (jo kg)
-ki (jm kh)
-kj "and-3 (\\ (a b c) (and (and a b) c))"
-kk (ha kj)
-kl (hr kk)
-km "and-4 (\\ (a b c d) (and (and-3 a b c) d))"
-kn (ha km)
-ko (hr kn)
-kp "and-5 (\\ (a b c d e) (and (and-4 a b c d) e))"
-kq (ha kp)
-kr (hr kq)
-ks "or (\\ (a b) (if a true b))"
-kt (ha ks)
-ku (hr kt)
-kv "code"
-kw (io kv)
-kx "or-3 (\\ (a b c) (or (or a b) c))"
-ky (is kx)
-kz (kw ky)
-la "or-4 (\\ (a b c d) (or (or-3 a b c) d))"
-lb (is la)
-lc (kw lb)
-ld "or-5 (\\ (a b c d e) (or (or-4 a b c d) e))"
-le (is ld)
-lf (kw le)
-lg "not (\\ (a) (if a false true))"
-lh (ha lg)
-li (hr lh)
-lj "Test them!"
-lk (jg lj)
-ll (je lk)
-lm "(and true true)"
-ln (jg lm)
-lo (jt ln)
-lp "(and true false)"
-lq (jg lp)
-lr (jt lq)
-ls "(and false true)"
-lt (jg ls)
-lu (jt lt)
-lv "(and false false)"
-lw (jg lv)
-lx (jt lw)
-ly "(or true true)"
-lz (dg ly)
-ma (dq lz)
-mb "(or true false)"
-mc (dg mb)
-md (dq mc)
-me "(or false true)"
-mf (dg me)
-mg (dq mf)
-mh "(or false false)"
-mi (dg mh)
-mj (dq mi)
-mk "enum"
-ml "code"
-mm (mk ml)
-mn "string"
-mo (mn)
-mp "(not true)"
-mq (mo mp)
-mr (mm mq)
-ms "(not false)"
-mt (mo ms)
-mu (mm mt)
-mv (dk iv iy jb jj jr jw jz kc kf ki kl ko kr ku kz lc lf li ll lo lr lu lx ma md mg mj mr mu)
-mw (de in mv)
-mx (da mw)
-my "numbers"
-mz (es my)
-na "text"
-nb (eo na)
-nc "Arithmetic functions are defined in a way so that they work on ints and floats. However, both arguments have to have the same type."
-nd (es nc)
-ne (nb nd)
-nf "chapter"
-ng (eo nf)
-nh "struct"
-ni "title"
-nj "parts"
-nk (nh ni nj)
-nl "addition"
-nm (cv nl)
-nn "array"
-no (nn)
-np "enum"
-nq "text"
-nr (np nq)
-ns "string"
-nt (ns)
-nu "+ works on ints and floats, but you can't mix operand types."
-nv (nt nu)
-nw (nr nv)
-nx "enum"
-ny "code"
-nz (nx ny)
-oa "string"
-ob (oa)
-oc "type-error \"You can only add two ints or floats.\""
-od (ob oc)
-oe (nz od)
-of "+ (\\ (a b)\n  (% (kind a)\n    int (% (kind b) int (@add a b) _ (crash type-error))\n    float (% (kind b) float (@f-add a b) _ (crash type-error))\n    _ (crash type-error)))"
-og (es of)
-oh (eq og)
-oi "code"
-oj (cr oi)
-ok "(+ 2 3)"
-ol (cv ok)
-om (oj ol)
-on "(+ 2. 3.)"
-oo (cv on)
-op (oj oo)
-oq "(+ 2 \"hi\")"
-or (ob oq)
-os (nz or)
-ot "(+ 2 3.)"
-ou (ob ot)
-ov (nz ou)
-ow (no nw oe oh om op os ov)
-ox (nk nm ow)
-oy (ng ox)
-oz "string"
-pa (oz)
-pb "subtraction"
-pc (pa pb)
-pd "- works on ints and floats, but you can't mix operand types."
-pe (nt pd)
-pf (nr pe)
-pg "type-error \"You can only subtract two ints or floats.\""
-ph (ob pg)
-pi (nz ph)
-pj "- (\\ (a b)\n  (% (kind a)\n    int (% (kind b) int (@subtract a b) _ (crash type-error))\n    float (% (kind b) float (@f-subtract a b) _ (crash type-error))\n    _ (crash type-error)))"
-pk (es pj)
-pl (eq pk)
-pm "code"
-pn (np pm)
-po "(- 10 7)"
-pp (cv po)
-pq (pn pp)
-pr "(- 10. 7.)"
-ps (nt pr)
-pt (pn ps)
-pu "(- 3 \"hi\")"
-pv (ob pu)
-pw (nz pv)
-px "(- 3 0.)"
-py (ob px)
-pz (nz py)
-qa (no pf pi pl pq pt pw pz)
-qb (nk pc qa)
-qc (ng qb)
-qd "multiplication"
-qe (pa qd)
-qf "* works on ints and floats, but you can't mix operand types."
-qg (nt qf)
-qh (nr qg)
-qi "type-error \"You can only multiply two ints or floats.\""
-qj (ob qi)
-qk (nz qj)
-ql "* (\\ (a b)\n  (% (kind a)\n    int (% (kind b) int (@multiply a b) _ (crash type-error))\n    float (% (kind b) float (@f-multiply a b) _ (crash type-error))\n    _ (crash type-error)))"
-qm (es ql)
-qn (eq qm)
-qo "(* 4 8)"
-qp (cv qo)
-qq (oj qp)
-qr "(* 4. 8.)"
-qs (nt qr)
-qt (pn qs)
-qu "(* 4 \"hi\")"
-qv (ob qu)
-qw (nz qv)
-qx "(* 4 3.)"
-qy (ob qx)
-qz (nz qy)
-ra (no qh qk qn qq qt qw qz)
-rb (nk qe ra)
-rc (ng rb)
-rd "enum"
-re "chapter"
-rf (rd re)
-rg "struct"
-rh "title"
-ri "parts"
-rj (rg rh ri)
-rk "string"
-rl (rk)
-rm "division"
-rn (rl rm)
-ro "array"
-rp (ro)
-rq "code"
-rr (rd rq)
-rs "type-error \"You can only divide two ints or floats.\""
-rt (rl rs)
-ru (rr rt)
-rv "/ (\\ (a b)\n  (% (kind a)\n    int (% (kind b) int (@divide a b) _ (crash type-error))\n    float (% (kind b) float (@f-divide a b) _ (crash type-error))))"
-rw (rl rv)
-rx (rr rw)
-ry "(/ 12 3)"
-rz (cv ry)
-sa (oj rz)
-sb "(/ 13 3)"
-sc (cv sb)
-sd (oj sc)
-se "(/ 3 0)"
-sf (cv se)
-sg (oj sf)
-sh (rp ru rx sa sd sg)
-si (rj rn sh)
-sj (rf si)
-sk "chapter"
-sl (rd sk)
-sm "title"
-sn "parts"
-so (rg sm sn)
-sp "modulo (only works on ints)"
-sq (rl sp)
-sr "mod (\\ (a b) (@modulo a b))"
-ss (rl sr)
-st (rr ss)
-su "(mod 54 2)"
-sv (cv su)
-sw (oj sv)
-sx "(mod 55 2)"
-sy (cv sx)
-sz (oj sy)
-ta "(mod 3 0)"
-tb (cv ta)
-tc (oj tb)
-td (rp st sw sz tc)
-te (so sq td)
-tf (sl te)
-tg "chapter"
-th (rd tg)
-ti "title"
-tj "parts"
-tk (rg ti tj)
-tl "comparison"
-tm (ic tl)
-tn "type-error \"You can only compare two ints or floats.\""
-to (rl tn)
-tp (rr to)
-tq "compare (\\ (a b)\n  (% (kind a)\n    int (% (kind b) int (@compare a b) _ (crash type-error))\n    float (% (kind b) float (@f-compare a b) _ (crash type-error))\n    _ (crash type-error)))"
-tr (rl tq)
-ts (rr tr)
-tt "(compare 2 3)"
-tu (ic tt)
-tv (ia tu)
-tw "(compare 2. 3.)"
-tx (rl tw)
-ty (rr tx)
-tz "(compare \"hi\" 2)"
-ua (rl tz)
-ub (rr ua)
-uc "= (\\ (a b) (@equal? a b))"
-ud (rl uc)
-ue (rr ud)
-uf "!= (\\ (a b) (not (@equal? a b)))"
-ug (rl uf)
-uh (rr ug)
-ui "< (\\ (a b) (% (compare a b) less true _ false))"
-uj (rl ui)
-uk (rr uj)
-ul "> (\\ (a b) (% (compare a b) greater true _ false))"
-um (rl ul)
-un (rr um)
-uo "<= (\\ (a b) (% (compare a b) greater false _ true))"
-up (rl uo)
-uq (rr up)
-ur ">= (\\ (a b) (% (compare a b) less false _ true))"
-us (rl ur)
-ut (rr us)
-uu (rp tp ts tv ty ub ue uh uk un uq ut)
-uv (tk tm uu)
-uw (th uv)
-ux "bitwise operations (only work on ints)"
-uy (rl ux)
-uz "<< (\\ (a b) (@shift-left a b))"
-va (cv uz)
-vb (oj va)
-vc ">> (\\ (a b) (@shift-right a b))"
-vd (cv vc)
-ve (oj vd)
-vf "bit-and (\\ (a b) (@and a b))"
-vg (cv vf)
-vh (oj vg)
-vi "bit-or (\\ (a b) (@or a b))"
-vj (cv vi)
-vk (oj vj)
-vl "bit-xor (\\ (a b) (@xor a b))"
-vm (cv vl)
-vn (oj vm)
-vo "text"
-vp (rd vo)
-vq "Some examples:"
-vr (rl vq)
-vs (vp vr)
-vt "enum"
-vu "code"
-vv (vt vu)
-vw "(<< 2 1)"
-vx (pa vw)
-vy (vv vx)
-vz "(>> 4 1)"
-wa (pa vz)
-wb (vv wa)
-wc "(bit-and 6 3)"
-wd (pa wc)
-we (vv wd)
-wf "(bit-or 6 3)"
-wg (pa wf)
-wh (vv wg)
-wi "(bit-xor 6 3)"
-wj (pa wi)
-wk (vv wj)
-wl (rp vb ve vh vk vn vs vy wb we wh wk)
-wm (tk uy wl)
-wn (th wm)
-wo "chapter"
-wp (rd wo)
-wq "title"
-wr "parts"
-ws (rg wq wr)
-wt "utils: min, max, abs, even?, odd?"
-wu (rl wt)
-wv "min (\\ (a b) (if (< a b) a b))"
-ww (rl wv)
-wx (rr ww)
-wy "max (\\ (a b) (if (> a b) a b))"
-wz (rl wy)
-xa (rr wz)
-xb "abs (\\ (n)\n  (% (kind n)\n    int (if (< n 0) (- 0 n) n)\n    float (if (< n 0.) (- 0. n) n)\n    _ (crash \"You can only take the absolute of an int or float.\")))"
-xc (rl xb)
-xd (rr xc)
-xe "even? (\\ (n) (= (mod n 2) 0))"
-xf (rl xe)
-xg (rr xf)
-xh "odd? (\\ (n) (= (mod n 2) 1))"
-xi (rl xh)
-xj (rr xi)
-xk (rp wx xa xd xg xj)
-xl (ws wu xk)
-xm (wp xl)
-xn "conversions"
-xo (rl xn)
-xp "int->float (\\ (n) (@int->float n))"
-xq (rl xp)
-xr (rr xq)
-xs "float->int (\\ (f) (@float->int f))"
-xt (rl xs)
-xu (rr xt)
-xv "(int->float 3)"
-xw (rl xv)
-xx (rr xw)
-xy "(float->int 2.3)"
-xz (rl xy)
-ya (rr xz)
-yb "(float->int 2.7)"
-yc (rl yb)
-yd (rr yc)
-ye (rp xr xu xx ya yd)
-yf (tk xo ye)
-yg (th yf)
-yh "(/ (+ (- 5 2) (* 3 4)) 2)"
-yi (es yh)
-yj (eq yi)
-yk "(/ (+ (- 5. 2.) (* 3. 4.)) 2.)"
-yl (es yk)
-ym (eq yl)
-yn (eh ne oy qc rc sj tf uw wn xm yg yj ym)
-yo (ed mz yn)
-yp (dz yo)
-yq "arrays"
-yr (fn yq)
-ys "array-length (\\ (array) (@array-length array))"
-yt (fn ys)
-yu (fl yt)
-yv "array-get (\\ (array index) (@array-get array index))"
-yw (fn yv)
-yx (fl yw)
-yy "Some examples:"
-yz (fn yy)
-za (fx yz)
-zb "(array-length ([] \"foo\" \"bar\" \"baz\"))"
-zc (fn zb)
-zd (fl zc)
-ze "(array-get ([] \"foo\" \"bar\" \"baz\") 1)"
-zf (fn ze)
-zg (fl zf)
-zh (eh yu yx za zd zg)
-zi (ed yr zh)
-zj (dz zi)
-zk "enum"
-zl "chapter"
-zm (zk zl)
-zn "struct"
-zo "title"
-zp "parts"
-zq (zn zo zp)
-zr "lists"
-zs (fn zr)
-zt "array"
-zu (zt)
-zv "list-length (\\ (list)\n  (rec list (\\ (rec list) (% list empty 0 (more m) (+ (rec (.rest m)) 1)))))"
-zw (fn zv)
-zx (fl zw)
-zy "(list-length (| more (& item 5 rest (| empty))))"
-zz (fn zy)
-aaa (fl zz)
-aab "code"
-aac (zk aab)
-aad "string"
-aae (aad)
-aaf "array->list (\\ (array) (@array->list array))"
-aag (aae aaf)
-aah (aac aag)
-aai "list->array (\\ (list) (@list->array list))"
-aaj (aae aai)
-aak (aac aaj)
-aal "(array->list ([] 1 2 3))"
-aam (aae aal)
-aan (aac aam)
-aao (zu zx aaa aah aak aan)
-aap (zq zs aao)
-aaq (zm aap)
-aar "iterators"
-aas (rl aar)
-aat "An iterator is a function that takes no arguments and returns (| empty) or (| more (& item T rest Iterator))."
-aau (rl aat)
-aav (vp aau)
-aaw "chapter"
-aax (zk aaw)
-aay "title"
-aaz "parts"
-aba (zn aay aaz)
-abb "list interop"
-abc (aae abb)
-abd "list->iter (\\ (list)\n  (rec list (\\ (rec list)\n    (\\ ()\n      (% list\n        empty (| empty)\n        (more m) (| more (& item (.item m) rest (rec (.rest m)))))))))"
-abe (aae abd)
-abf (aac abe)
-abg "iter->list (\\ (iter)\n  (rec iter (\\ (rec iter)\n    (% (iter)\n      empty (| empty)\n      (more m) (| more (& item (.item m) rest (rec (.rest m))))))))"
-abh (aae abg)
-abi (aac abh)
-abj "(list->iter (array->list ([] 1 2 3)))"
-abk (aae abj)
-abl (aac abk)
-abm (zu abf abi abl)
-abn (aba abc abm)
-abo (aax abn)
-abp "array interop"
-abq (aae abp)
-abr "array->iter (\\ (array)\n  (rec 0 (\\ (rec i)\n    (\\ ()\n      (if (= i (array-length array))\n        (| empty)\n        (| more (& item (array-get array i) rest (rec (+ i 1)))))))))"
-abs (aae abr)
-abt (aac abs)
-abu "iter->array (\\ (iter) (list->array (iter->list iter)))"
-abv (aae abu)
-abw (aac abv)
-abx "(iter->array (array->iter ([] 1 2 3)))"
-aby (aae abx)
-abz (aac aby)
-aca (zu abt abw abz)
-acb (aba abq aca)
-acc (aax acb)
-acd "enum"
-ace "chapter"
-acf (acd ace)
-acg "struct"
-ach "title"
-aci "parts"
-acj (acg ach aci)
-ack "map"
-acl (rl ack)
-acm "array"
-acn (acm)
-aco "map (\\ (iter mapper)\n  (rec iter (\\ (rec iter)\n    (\\ ()\n      (% (iter)\n        empty (| empty)\n        (more m) (| more (& item (mapper (.item m)) rest (rec (.rest m)))))))))"
-acp (rl aco)
-acq (rr acp)
-acr "text"
-acs (acd acr)
-act "string"
-acu (act)
-acv "Using it:"
-acw (acu acv)
-acx (acs acw)
-acy "enum"
-acz "code"
-ada (acy acz)
-adb "string"
-adc (adb)
-add "(iter->array (map (array->iter ([] 1 2 3)) (\\ (n) (* n 2))))"
-ade (adc add)
-adf (ada ade)
-adg (acn acq acx adf)
-adh (acj acl adg)
-adi (acf adh)
-adj "filter"
-adk (acu adj)
-adl "code"
-adm (acd adl)
-adn "filter (\\ (iter checker)\n  (rec iter (\\ (next iter)\n    (\\ ()\n      (rec iter (\\ (seek iter)\n        (% (iter)\n          empty (| empty)\n          (more m)\n            (if (checker (.item m))\n              (| more (& item (.item m) rest (next (.rest m))))\n              (seek (.rest m))))))))))"
-ado (acu adn)
-adp (adm ado)
-adq "(iter->array (filter (array->iter ([] 1 2 3 4 5 6 7 8)) (\\ (item) (even? item))))"
-adr (acu adq)
-ads (adm adr)
-adt (acn adp ads)
-adu (acj adk adt)
-adv (acf adu)
-adw "take"
-adx (acu adw)
-ady "take (\\ (iter n)\n  (rec-2 iter n (\\ (rec iter n)\n    (\\ ()\n      (if (= n 0)\n        (| empty)\n        (% (iter)\n          empty (| empty)\n          (more m) (| more (& item (.item m) rest (rec (.rest m) (- n 1))))))))))"
-adz (acu ady)
-aea (adm adz)
-aeb "(iter->array (take (array->iter ([] 1 2 3 4 5)) 3))"
-aec (acu aeb)
-aed (adm aec)
-aee (acn aea aed)
-aef (acj adx aee)
-aeg (acf aef)
-aeh "skip"
-aei (acu aeh)
-aej "skip (\\ (iter n)\n  (\\ ()\n    (rec-2 iter n (\\ (rec iter n)\n      (if (= n 0)\n        (iter)\n        (% (iter)\n          empty (| empty)\n          (more m) (rec (.rest m) (- n 1))))))))"
-aek (acu aej)
-ael (adm aek)
-aem "(iter->array (skip (array->iter ([] 1 2 3 4 5 6 7)) 3))"
-aen (acu aem)
-aeo (adm aen)
-aep (acn ael aeo)
-aeq (acj aei aep)
-aer (acf aeq)
-aes "take-while"
-aet (acu aes)
-aeu "take-while (\\ (iter checker)\n  (rec iter (\\ (rec iter)\n    (\\ ()\n      (% (iter)\n        empty (| empty)\n        (more m)\n          (if (checker (.item m))\n            (| more (& item (.item m) rest (rec (.rest m))))\n            (| empty)))))))"
-aev (acu aeu)
-aew (adm aev)
-aex "(iter->array (take-while (array->iter ([] 1 2 3 4 5 6)) (\\ (n) (< n 4))))"
-aey (acu aex)
-aez (adm aey)
-afa (acn aew aez)
-afb (acj aet afa)
-afc (acf afb)
-afd "skip-while"
-afe (acu afd)
-aff "skip-while (\\ (iter checker)\n  (\\ ()\n    (rec iter (\\ (drop iter)\n      (% (iter)\n        empty (| empty)\n        (more m)\n          (if (checker (.item m))\n            (drop (.rest m))\n            (| more (& item (.item m) rest (.rest m)))))))))"
-afg (acu aff)
-afh (adm afg)
-afi "(iter->array (skip-while (array->iter ([] 1 2 3 4 5 6)) (\\ (n) (< n 3))))"
-afj (acu afi)
-afk (adm afj)
-afl (acn afh afk)
-afm (acj afe afl)
-afn (acf afm)
-afo "generate"
-afp (acu afo)
-afq "generate (\\ (generator)\n  (rec 0 (\\ (rec i) (\\ () (| more (& item (generator i) rest (rec (+ i 1))))))))"
-afr (acu afq)
-afs (adm afr)
-aft "(iter->array (take (generate (\\ (i) i)) 10))"
-afu (acu aft)
-afv (adm afu)
-afw (acn afs afv)
-afx (acj afp afw)
-afy (acf afx)
-afz "fold"
-aga (acu afz)
-agb "fold (\\ (iter initial reducer)\n  (rec-2 initial iter (\\ (rec state iter)\n    (% (iter)\n      empty state\n      (more m) (rec (reducer state (.item m)) (.rest m))))))"
-agc (acu agb)
-agd (adm agc)
-age "(fold (array->iter ([] 1 2 3)) 0 +)"
-agf (acu age)
-agg (adm agf)
-agh (acn agd agg)
-agi (acj aga agh)
-agj (acf agi)
-agk "reduce"
-agl (acu agk)
-agm "reduce (\\ (iter reducer)\n  (% (iter)\n    empty (crash \"called reduce on empty iterator\")\n    (more m) (fold (.rest m) (.item m) reducer)))"
-agn (acu agm)
-ago (adm agn)
-agp "(reduce (array->iter ([] 1 2 3 4)) +)"
-agq (acu agp)
-agr (adm agq)
-ags (acn ago agr)
-agt (acj agl ags)
-agu (acf agt)
-agv "concat"
-agw (acu agv)
-agx "concat (\\ (a b)\n  (rec a (\\ (rec a)\n    (\\ ()\n      (% (a)\n        empty (b)\n        (more m) (| more (& item (.item m) rest (rec (.rest m)))))))))"
-agy (acu agx)
-agz (adm agy)
-aha "(iter->array (concat (array->iter ([] 1 2 3)) (array->iter ([] 4 5 6))))"
-ahb (acu aha)
-ahc (adm ahb)
-ahd "concat-3 (\\ (a b c) (concat a (concat b c)))"
-ahe (acu ahd)
-ahf (adm ahe)
-ahg "concat-4 (\\ (a b c d) (concat a (concat-3 b c d)))"
-ahh (acu ahg)
-ahi (adm ahh)
-ahj "concat-5 (\\ (a b c d e) (concat a (concat-4 b c d e)))"
-ahk (acu ahj)
-ahl (adm ahk)
-ahm "concat-all (\\ (iters) (fold iters (array->iter ([])) (\\ (acc it) (concat acc it))))"
-ahn (acu ahm)
-aho (adm ahn)
-ahp (acn agz ahc ahf ahi ahl aho)
-ahq (acj agw ahp)
-ahr (acf ahq)
-ahs "length"
-aht (acu ahs)
-ahu "length (\\ (iter) (fold iter 0 (\\ (n it) (+ n 1))))"
-ahv (acu ahu)
-ahw (adm ahv)
-ahx (acn ahw)
-ahy (acj aht ahx)
-ahz (acf ahy)
-aia "any"
-aib (acu aia)
-aic "any (\\ (iter checker)\n  (rec iter (\\ (rec iter)\n    (% (iter)\n      empty false\n      (more m) (if (checker (.item m)) true (rec (.rest m)))))))"
-aid (acu aic)
-aie (adm aid)
-aif "(any (array->iter ([] 1 3 5 6)) even?)"
-aig (acu aif)
-aih (adm aig)
-aii (acn aie aih)
-aij (acj aib aii)
-aik (acf aij)
-ail "find"
-aim (acu ail)
-ain "find (\\ (iter checker)\n  (rec iter (\\ (rec iter)\n    (% (iter)\n      empty (| none)\n      (more m) (if (checker (.item m)) (| some (.item m)) (rec (.rest m)))))))"
-aio (acu ain)
-aip (adm aio)
-aiq "(find (array->iter ([] 1 2 3 4)) even?)"
-air (acu aiq)
-ais (adm air)
-ait "(find (array->iter ([] 1 3 5 7)) even?)"
-aiu (acu ait)
-aiv (adm aiu)
-aiw (acn aip ais aiv)
-aix (acj aim aiw)
-aiy (acf aix)
-aiz "indexed"
-aja (acu aiz)
-ajb "indexed (\\ (iter)\n  (rec-2 iter 0 (\\ (rec iter index)\n    (\\ ()\n      (% (iter)\n        empty (| empty)\n        (more m)\n          (| more (& item (& index index item (.item m)) rest (rec (.rest m) (+ index 1)))))))))"
-ajc (acu ajb)
-ajd (adm ajc)
-aje "(iter->array (indexed (array->iter ([] \"foo\" \"bar\" \"baz\"))))"
-ajf (acu aje)
-ajg (adm ajf)
-ajh (acn ajd ajg)
-aji (acj aja ajh)
-ajj (acf aji)
-ajk (m aav abo acc adi adv aeg aer afc afn afy agj agu ahr ahz aik aiy ajj)
-ajl (g aas ajk)
-ajm (c ajl)
-ajn (m cy dw ft gy il mx yp zj aaq ajm)
-ajo (g cq ajn)
-ajp (c ajo)
-ajq "chapter"
-ajr (hy ajq)
-ajs "struct"
-ajt "title"
-aju "parts"
-ajv (ajs ajt aju)
-ajw "the render system"
-ajx (ic ajw)
-ajy "array"
-ajz (ajy)
-aka "text"
-akb (hy aka)
-akc "Rendering works using drawing instructions."
-akd (ic akc)
-ake (akb akd)
-akf "DrawingInstruction = (|\n  nothing\n  fill-path (& path Path color Color)\n  translate (& by Point what DrawingInstruction)\n  all ([] DrawingInstruction))"
-akg (ic akf)
-akh (akb akg)
-aki "Point = (& x Float y Float)"
-akj (ic aki)
-akk (akb akj)
-akl "Color = (& r Int g Int b Int)"
-akm (ic akl)
-akn (akb akm)
-ako "Path = ([] PathSegment)"
-akp (ic ako)
-akq (akb akp)
-akr "PathSegment = (| move-to Point line-to Point)"
-aks (ic akr)
-akt (akb aks)
-aku "why drawing instructions and not pixels?"
-akv (ic aku)
-akw "Initially, I tried to communicate with the outside world using pixel graphics. However, I believe that's not the right move as pixels are more difficult to handle in code. Having pixels (or some concept ofa texture) within this notebook requires either:\n- mutable values (which don't exist in here), or\n- lots of copying on every texture modification, or\n- a super-smart optimizing compiler (which is useful but it has the sort of slow-by-default-and-you-have-to-trust-the-black-box-to-work feeling I don't like), or\n- inefficient storage of individual pixels in trees."
-akx (ic akw)
-aky (akb akx)
-akz "By communicating the intent on a quite high-level, we can instead make use of GPUs when turning the high-level drawing instructions into pixels. This is also similar to how Flutter works: The Dart VM is decently fast, but not super fast, so it just emits drawing instructions that the lower-level C++ engine takes and turns into pixels."
-ala (ic akz)
-alb (akb ala)
-alc (ajz aky alb)
-ald (ajv akv alc)
-ale (ajr ald)
-alf "Within this notebook, code usually returns structs of the form (& draw DrawingInstruction width Float height Float) rather than just a raw instruction."
-alg (ic alf)
-alh (akb alg)
-ali "point, size"
-alj (ic ali)
-alk "point (\\ (x y) (& x x y y))"
-all (ic alk)
-alm (ia all)
-aln "(point 2. 3.)"
-alo (ic aln)
-alp (ia alo)
-alq "origin (point 0. 0.)"
-alr (ic alq)
-als (ia alr)
-alt (ajz alm alp als)
-alu (ajv alj alt)
-alv (ajr alu)
-alw "color"
-alx (ic alw)
-aly "is-digit (\\ (char) (and (>= c (ascii-char \"0\")) (<= c (ascii-char \"9\"))))"
-alz (ic aly)
-ama (ia alz)
-amb "color by hex"
-amc (ic amb)
-amd "parse-hex (\\ (string)\n  (rec-2 0 (array->list (string->bytes string)) (\\ (rec value chars)\n    (% chars\n      empty value\n      (more m) (:\n        c (.item m)\n        digit\n          (cond\n            (and (>= c (ascii-char \"0\")) (<= c (ascii-char \"9\"))) (- c (ascii-char \"0\"))\n            (and (>= c (ascii-char \"a\")) (<= c (ascii-char \"f\"))) (+ 10 (- c (ascii-char \"a\")))\n            else (crash \"invalid hex char\"))))\n        (rec (+ (* value 16) digit) (.rest m)))))"
-ame (ic amd)
-amf (ia ame)
-amg "color (\\ (hex) (:\n  _ (assert (= (string-length hex) 7))\n  _ (assert (= (string-slice hex 0 1) \"#\"))\n  (&\n    r (parse-hex (string-slice hex 1 3))\n    g (parse-hex (string-slice hex 3 5))\n    b (parse-hex (string-slice hex 5 7)))))"
-amh (ic amg)
-ami (ia amh)
-amj "black (color \"#000000\")"
-amk (ic amj)
-aml (ia amk)
-amm (ajz amf ami aml)
-amn (ajv amc amm)
-amo (ajr amn)
-amp (ajz ama amo)
-amq (ajv alx amp)
-amr (ajr amq)
-ams (ajz ake akh akk akn akq akt ale alh alv amr)
-amt (ajv ajx ams)
-amu (ajr amt)
-amv "keyboard"
-amw (ic amv)
-amx "no-modifiers? (\\ (key) (and-3 (not (.control key)) (not (.shift key)) (not (.alt key))))"
-amy (ic amx)
-amz (ia amy)
-ana "ctrl-modifier? (\\ (key) (and-3 (.control key) (not (.shift key)) (not (.alt key))))"
-anb (ic ana)
-anc (ia anb)
-and "alt-modifier? (\\ (key) (and-3 (not (.control key)) (not (.shift key)) (.alt key)))"
-ane (ic and)
-anf (ia ane)
-ang "shift-modifier? (\\ (key) (and-3 (not (.control key)) (.shift key) (not (.alt key))))"
-anh (ic ang)
-ani (ia anh)
-anj "ctrl-shift-modifiers? (\\ (key) (and-3 (.control key) (.shift key) (not (.alt key))))"
-ank (ic anj)
-anl (ia ank)
-anm "shift-alt-modifiers? (\\ (key) (and-3 (not (.control key)) (.shift key) (.alt key)))"
-ann (ic anm)
-ano (ia ann)
-anp "key-escape? (\\ (key) (and (= (.keycode key) 256) (no-modifiers? key)))"
-anq (ic anp)
-anr (ia anq)
-ans (ajz amz anc anf ani anl ano anr)
-ant (ajv amw ans)
-anu (ajr ant)
-anv "enum"
-anw "chapter"
-anx (anv anw)
-any "struct"
-anz "title"
-aoa "parts"
-aob (any anz aoa)
-aoc "string"
-aod (aoc)
-aoe "Einkaufsliste"
-aof (aod aoe)
-aog "array"
-aoh (aog)
-aoi "text"
-aoj (anv aoi)
-aok "string"
-aol (aok)
-aom "Keeese"
-aon (aol aom)
-aoo (aoj aon)
-aop "enum"
-aoq "text"
-aor (aop aoq)
-aos "Brot"
-aot (aod aos)
-aou (aor aot)
-aov "Milch"
-aow (aol aov)
-aox (aoj aow)
-aoy (aoh aoo aou aox)
-aoz (aob aof aoy)
-apa (anx aoz)
-apb (m co ajp amu anu apa)
-apc (g k apb)
-apd (c apc)
-export apd
+dl "nil"
+dm (dk dl)
+dn "Nil is used whenever we don't actually want to provide a useful value. Functions that only have side-effects (aka they may crash or hang) return nil. See the assert function for an example."
+do (ak dn)
+dp (aq do)
+dq "code"
+dr (cq dq)
+ds "string"
+dt (ds)
+du "nil (&)"
+dv (dt du)
+dw (dr dv)
+dx (da dp dw)
+dy (cw dm dx)
+dz (cs dy)
+ea "enum"
+eb "chapter"
+ec (ea eb)
+ed "struct"
+ee "title"
+ef "parts"
+eg (ed ee ef)
+eh "crash & assert"
+ei (dk eh)
+ej "array"
+ek (ej)
+el "enum"
+em "code"
+en (el em)
+eo "crash (\\ (error) (@crash error))"
+ep (dk eo)
+eq (en ep)
+er "assert (\\ (check) (if check nil (crash \"Assert failed.\")))"
+es (dk er)
+et (en es)
+eu "enum"
+ev "code"
+ew (eu ev)
+ex "string"
+ey (ex)
+ez "todo (\\ (task) (crash (| todo task)))"
+fa (ey ez)
+fb (ew fa)
+fc "enum"
+fd "code"
+fe (fc fd)
+ff "string"
+fg (ff)
+fh "(crash \"hi\")"
+fi (fg fh)
+fj (fe fi)
+fk "(assert (| true))"
+fl (fg fk)
+fm (fe fl)
+fn "(assert (| false))"
+fo (fg fn)
+fp (fe fo)
+fq "code"
+fr (ea fq)
+fs "string"
+ft (fs)
+fu "(todo \"hi\")"
+fv (ft fu)
+fw (fr fv)
+fx (ek eq et fb fj fm fp fw)
+fy (eg ei fx)
+fz (ec fy)
+ga "enum"
+gb "chapter"
+gc (ga gb)
+gd "struct"
+ge "title"
+gf "parts"
+gg (gd ge gf)
+gh "kind reflection"
+gi (ey gh)
+gj "array"
+gk (gj)
+gl "text"
+gm (ea gl)
+gn "The kind of a value is sort of like its top-level type: int, float, string, struct, enum, or function."
+go (ft gn)
+gp (gm go)
+gq "kind (\\ (value) (@kind value))"
+gr (ey gq)
+gs (ew gr)
+gt "(kind 2)"
+gu (ey gt)
+gv (ew gu)
+gw "(kind 2.)"
+gx (ey gw)
+gy (ew gx)
+gz "(kind \"hello\")"
+ha (ey gz)
+hb (ew ha)
+hc "(kind (& x 1 y 2))"
+hd (ey hc)
+he (ew hd)
+hf "(kind (| some 3))"
+hg (ey hf)
+hh (ew hg)
+hi "code"
+hj (ga hi)
+hk "string"
+hl (hk)
+hm "(kind ([] 1 2 3))"
+hn (hl hm)
+ho (hj hn)
+hp "(kind (\\ () 2))"
+hq (ey hp)
+hr (ew hq)
+hs "enum"
+ht "code"
+hu (hs ht)
+hv "string"
+hw (hv)
+hx "int? (\\ (value) (% (kind value) int (| true) _ (| false)))"
+hy (hw hx)
+hz (hu hy)
+ia "float? (\\ (value) (% (kind value) float (| true) _ (| false)))"
+ib (hw ia)
+ic (hu ib)
+id "string? (\\ (value) (% (kind value) string (| true) _ (| false)))"
+ie (hw id)
+if (hu ie)
+ig "struct? (\\ (value) (% (kind value) struct (| true) _ (| false)))"
+ih (hw ig)
+ii (hu ih)
+ij "enum? (\\ (value) (% (kind value) enum (| true) _ (| false)))"
+ik (hw ij)
+il (hu ik)
+im "array? (\\ (value) (% (kind value) array (| true) _ (| false)))"
+in (hl im)
+io (hj in)
+ip "function? (\\ (value) (% (kind value) function (| true) _ (| false)))"
+iq (hw ip)
+ir (hu iq)
+is (gk gp gs gv gy hb he hh ho hr hz ic if ii il io ir)
+it (gg gi is)
+iu (gc it)
+iv "string"
+iw (iv)
+ix "recursive helpers"
+iy (iw ix)
+iz "Functions can't refer to themselves while they're being defined. So, in order to support generic functions, I define a rec function that allows you to write a function that calls itself."
+ja (ft iz)
+jb (gm ja)
+jc "You use the recursive functions like this:"
+jd (ft jc)
+je (gm jd)
+jf "(rec initial-state (\\ (rec state) <code>))"
+jg (ft jf)
+jh (gm jg)
+ji "Where the <code> can just return a value or call (rec foo) to invoke itself again."
+jj (ft ji)
+jk (gm jj)
+jl "enum"
+jm "code"
+jn (jl jm)
+jo "rec (\\ (input function) (:\n  rec (\\ (rec input) (function (\\ (new) (rec rec new)) input))\n  (rec rec input)))"
+jp (iw jo)
+jq (jn jp)
+jr "rec-2 (\\ (a b function) (:\n  rec (\\ (rec a b) (function (\\ (a b) (rec rec a b)) a b))\n  (rec rec a b)))"
+js (iw jr)
+jt (jn js)
+ju "enum"
+jv "code"
+jw (ju jv)
+jx "string"
+jy (jx)
+jz "rec-3 (\\ (a b c function) (:\n  rec (\\ (rec a b c) (function (\\ (a b c) (rec rec a b c)) a b c))\n  (rec rec a b c)))"
+ka (jy jz)
+kb (jw ka)
+kc "rec-4 (\\ (a b c d function) (:\n  rec (\\ (rec a b c d) (function (\\ (a b c d) (rec rec a b c d)) a b c d))\n  (rec rec a b c d)))"
+kd (jy kc)
+ke (jw kd)
+kf (ek jb je jh jk jq jt kb ke)
+kg (eg iy kf)
+kh (ec kg)
+ki "chapter"
+kj (ao ki)
+kk "struct"
+kl "title"
+km "parts"
+kn (kk kl km)
+ko "booleans"
+kp (dk ko)
+kq "array"
+kr (kq)
+ks "enum"
+kt "text"
+ku (ks kt)
+kv "string"
+kw (kv)
+kx "Booleans are not built into the language, they are just enum values:"
+ky (kw kx)
+kz (ku ky)
+la "true (| true)"
+lb (iw la)
+lc (jn lb)
+ld "false (| false)"
+le (iw ld)
+lf (jn le)
+lg "enum"
+lh "text"
+li (lg lh)
+lj "string"
+lk (lj)
+ll "Now that we have booleans, ifs work!"
+lm (lk ll)
+ln (li lm)
+lo "enum"
+lp "code"
+lq (lo lp)
+lr "string"
+ls (lr)
+lt "(if true 2 3)"
+lu (ls lt)
+lv (lq lu)
+lw "code"
+lx (lg lw)
+ly "(if false 2 3)"
+lz (lk ly)
+ma (lx lz)
+mb "For cond expressions, it's typical to have a catch-all at the end. Here, I define else so I can just use else for that."
+mc (ak mb)
+md (aq mc)
+me "else true"
+mf (iw me)
+mg (jn mf)
+mh "Now, the typical boolean and, or, not functions. However, because Pear has no variadic functions, there are also variants that operate on a different number of arguments."
+mi (ak mh)
+mj (aq mi)
+mk "and (\\ (a b) (if a b false))"
+ml (ls mk)
+mm (lq ml)
+mn "and-3 (\\ (a b c) (and (and a b) c))"
+mo (iw mn)
+mp (jn mo)
+mq "and-4 (\\ (a b c d) (and (and-3 a b c) d))"
+mr (iw mq)
+ms (jn mr)
+mt "and-5 (\\ (a b c d e) (and (and-4 a b c d) e))"
+mu (iw mt)
+mv (jn mu)
+mw "or (\\ (a b) (if a true b))"
+mx (iw mw)
+my (jn mx)
+mz "code"
+na (ks mz)
+nb "or-3 (\\ (a b c) (or (or a b) c))"
+nc (kw nb)
+nd (na nc)
+ne "or-4 (\\ (a b c d) (or (or-3 a b c) d))"
+nf (kw ne)
+ng (na nf)
+nh "or-5 (\\ (a b c d e) (or (or-4 a b c d) e))"
+ni (kw nh)
+nj (na ni)
+nk "not (\\ (a) (if a false true))"
+nl (iw nk)
+nm (jn nl)
+nn "Test them!"
+no (lk nn)
+np (li no)
+nq "(and true true)"
+nr (lk nq)
+ns (lx nr)
+nt "(and true false)"
+nu (lk nt)
+nv (lx nu)
+nw "(and false true)"
+nx (lk nw)
+ny (lx nx)
+nz "(and false false)"
+oa (lk nz)
+ob (lx oa)
+oc "(or true true)"
+od (dk oc)
+oe (en od)
+of "(or true false)"
+og (dk of)
+oh (en og)
+oi "(or false true)"
+oj (dk oi)
+ok (en oj)
+ol "(or false false)"
+om (dk ol)
+on (en om)
+oo "enum"
+op "code"
+oq (oo op)
+or "string"
+os (or)
+ot "(not true)"
+ou (os ot)
+ov (oq ou)
+ow "(not false)"
+ox (os ow)
+oy (oq ox)
+oz (kr kz lc lf ln lv ma md mg mj mm mp ms mv my nd ng nj nm np ns nv ny ob oe oh ok on ov oy)
+pa (kn kp oz)
+pb (kj pa)
+pc "numbers"
+pd (ey pc)
+pe "text"
+pf (eu pe)
+pg "Arithmetic functions are defined in a way so that they work on ints and floats. However, both arguments have to have the same type."
+ph (ey pg)
+pi (pf ph)
+pj "addition"
+pk (df pj)
+pl "enum"
+pm "text"
+pn (pl pm)
+po "string"
+pp (po)
+pq "+ works on ints and floats, but you can't mix operand types."
+pr (pp pq)
+ps (pn pr)
+pt "enum"
+pu "code"
+pv (pt pu)
+pw "string"
+px (pw)
+py "type-error \"You can only add two ints or floats.\""
+pz (px py)
+qa (pv pz)
+qb "+ (\\ (a b)\n  (% (kind a)\n    int (if (int? b) (@add a b) (crash type-error))\n    float (if (float? b) (@f-add a b) (crash type-error))\n    _ (crash type-error)))"
+qc (hl qb)
+qd (hj qc)
+qe "code"
+qf (db qe)
+qg "(+ 2 3)"
+qh (df qg)
+qi (qf qh)
+qj "(+ 2. 3.)"
+qk (df qj)
+ql (qf qk)
+qm "(+ 2 \"hi\")"
+qn (px qm)
+qo (pv qn)
+qp "(+ 2 3.)"
+qq (px qp)
+qr (pv qq)
+qs (gk ps qa qd qi ql qo qr)
+qt (gg pk qs)
+qu (gc qt)
+qv "string"
+qw (qv)
+qx "subtraction"
+qy (qw qx)
+qz "- works on ints and floats, but you can't mix operand types."
+ra (pp qz)
+rb (pn ra)
+rc "type-error \"You can only subtract two ints or floats.\""
+rd (px rc)
+re (pv rd)
+rf "- (\\ (a b)\n  (% (kind a)\n    int (if (int? b) (@subtract a b) (crash type-error))\n    float (if (float? b) (@f-subtract a b) (crash type-error))\n    _ (crash type-error)))"
+rg (hl rf)
+rh (hj rg)
+ri "code"
+rj (pl ri)
+rk "(- 10 7)"
+rl (df rk)
+rm (rj rl)
+rn "(- 10. 7.)"
+ro (pp rn)
+rp (rj ro)
+rq "(- 3 \"hi\")"
+rr (px rq)
+rs (pv rr)
+rt "(- 3 0.)"
+ru (px rt)
+rv (pv ru)
+rw (gk rb re rh rm rp rs rv)
+rx (gg qy rw)
+ry (gc rx)
+rz "multiplication"
+sa (qw rz)
+sb "* works on ints and floats, but you can't mix operand types."
+sc (pp sb)
+sd (pn sc)
+se "type-error \"You can only multiply two ints or floats.\""
+sf (px se)
+sg (pv sf)
+sh "* (\\ (a b)\n  (% (kind a)\n    int (if (int? b) (@multiply a b) (crash type-error))\n    float (if (float? b) (@f-multiply a b) (crash type-error))\n    _ (crash type-error)))"
+si (hl sh)
+sj (hj si)
+sk "(* 4 8)"
+sl (df sk)
+sm (qf sl)
+sn "(* 4. 8.)"
+so (pp sn)
+sp (rj so)
+sq "(* 4 \"hi\")"
+sr (px sq)
+ss (pv sr)
+st "(* 4 3.)"
+su (px st)
+sv (pv su)
+sw (gk sd sg sj sm sp ss sv)
+sx (gg sa sw)
+sy (gc sx)
+sz "string"
+ta (sz)
+tb "division"
+tc (ta tb)
+td "enum"
+te "code"
+tf (td te)
+tg "type-error \"You can only divide two ints or floats.\""
+th (ta tg)
+ti (tf th)
+tj "/ (\\ (a b)\n  (% (kind a)\n    int (if (int? b) (@divide a b) (crash type-error))\n    float (if (float? b) (@f-divide a b) (crash type-error))))"
+tk (hl tj)
+tl (hj tk)
+tm "(/ 12 3)"
+tn (df tm)
+to (qf tn)
+tp "(/ 13 3)"
+tq (df tp)
+tr (qf tq)
+ts "(/ 3 0)"
+tt (df ts)
+tu (qf tt)
+tv (gk ti tl to tr tu)
+tw (gg tc tv)
+tx (gc tw)
+ty "chapter"
+tz (td ty)
+ua "struct"
+ub "title"
+uc "parts"
+ud (ua ub uc)
+ue "modulo (only works on ints)"
+uf (ta ue)
+ug "array"
+uh (ug)
+ui "mod (\\ (a b) (@modulo a b))"
+uj (ta ui)
+uk (tf uj)
+ul "(mod 54 2)"
+um (df ul)
+un (qf um)
+uo "(mod 55 2)"
+up (df uo)
+uq (qf up)
+ur "(mod 3 0)"
+us (df ur)
+ut (qf us)
+uu (uh uk un uq ut)
+uv (ud uf uu)
+uw (tz uv)
+ux "comparison"
+uy (jy ux)
+uz "type-error \"You can only compare two ints or floats.\""
+va (ta uz)
+vb (tf va)
+vc "compare (\\ (a b)\n  (% (kind a)\n    int (if (int? b) (@compare a b) (crash type-error))\n    float (if (float? b) (@f-compare a b) (crash type-error))\n    _ (crash type-error)))"
+vd (hl vc)
+ve (hj vd)
+vf "(compare 2 3)"
+vg (jy vf)
+vh (jw vg)
+vi "(compare 2. 3.)"
+vj (ta vi)
+vk (tf vj)
+vl "(compare \"hi\" 2)"
+vm (ta vl)
+vn (tf vm)
+vo "= (\\ (a b) (@equal? a b))"
+vp (ta vo)
+vq (tf vp)
+vr "!= (\\ (a b) (not (@equal? a b)))"
+vs (ta vr)
+vt (tf vs)
+vu "< (\\ (a b) (% (compare a b) less true _ false))"
+vv (ta vu)
+vw (tf vv)
+vx "> (\\ (a b) (% (compare a b) greater true _ false))"
+vy (ta vx)
+vz (tf vy)
+wa "<= (\\ (a b) (% (compare a b) greater false _ true))"
+wb (ta wa)
+wc (tf wb)
+wd ">= (\\ (a b) (% (compare a b) less false _ true))"
+we (ta wd)
+wf (tf we)
+wg (gk vb ve vh vk vn vq vt vw vz wc wf)
+wh (gg uy wg)
+wi (gc wh)
+wj "chapter"
+wk (td wj)
+wl "title"
+wm "parts"
+wn (ua wl wm)
+wo "bitwise operations (only work on ints)"
+wp (ta wo)
+wq "<< (\\ (a b) (@shift-left a b))"
+wr (df wq)
+ws (qf wr)
+wt ">> (\\ (a b) (@shift-right a b))"
+wu (df wt)
+wv (qf wu)
+ww "bit-and (\\ (a b) (@and a b))"
+wx (df ww)
+wy (qf wx)
+wz "bit-or (\\ (a b) (@or a b))"
+xa (df wz)
+xb (qf xa)
+xc "bit-xor (\\ (a b) (@xor a b))"
+xd (df xc)
+xe (qf xd)
+xf "text"
+xg (td xf)
+xh "Some examples:"
+xi (ta xh)
+xj (xg xi)
+xk "enum"
+xl "code"
+xm (xk xl)
+xn "(<< 2 1)"
+xo (qw xn)
+xp (xm xo)
+xq "(>> 4 1)"
+xr (qw xq)
+xs (xm xr)
+xt "(bit-and 6 3)"
+xu (qw xt)
+xv (xm xu)
+xw "(bit-or 6 3)"
+xx (qw xw)
+xy (xm xx)
+xz "(bit-xor 6 3)"
+ya (qw xz)
+yb (xm ya)
+yc (uh ws wv wy xb xe xj xp xs xv xy yb)
+yd (wn wp yc)
+ye (wk yd)
+yf "chapter"
+yg (td yf)
+yh "title"
+yi "parts"
+yj (ua yh yi)
+yk "utils: min, max, abs, even?, odd?"
+yl (ta yk)
+ym "min (\\ (a b) (if (< a b) a b))"
+yn (ta ym)
+yo (tf yn)
+yp "max (\\ (a b) (if (> a b) a b))"
+yq (ta yp)
+yr (tf yq)
+ys "abs (\\ (n)\n  (% (kind n)\n    int (if (< n 0) (- 0 n) n)\n    float (if (< n 0.) (- 0. n) n)\n    _ (crash \"You can only take the absolute of an int or float.\")))"
+yt (ta ys)
+yu (tf yt)
+yv "even? (\\ (n) (= (mod n 2) 0))"
+yw (ta yv)
+yx (tf yw)
+yy "odd? (\\ (n) (= (mod n 2) 1))"
+yz (ta yy)
+za (tf yz)
+zb (uh yo yr yu yx za)
+zc (yj yl zb)
+zd (yg zc)
+ze "conversions"
+zf (ta ze)
+zg "int->float (\\ (n) (@int->float n))"
+zh (ta zg)
+zi (tf zh)
+zj "float->int (\\ (f) (@float->int f))"
+zk (ta zj)
+zl (tf zk)
+zm "(int->float 3)"
+zn (ta zm)
+zo (tf zn)
+zp "(float->int 2.3)"
+zq (ta zp)
+zr (tf zq)
+zs "(float->int 2.7)"
+zt (ta zs)
+zu (tf zt)
+zv (uh zi zl zo zr zu)
+zw (wn zf zv)
+zx (wk zw)
+zy "(/ (+ (- 5 2) (* 3 4)) 2)"
+zz (ey zy)
+aaa (ew zz)
+aab "(/ (+ (- 5. 2.) (* 3. 4.)) 2.)"
+aac (ey aab)
+aad (ew aac)
+aae (gk pi qu ry sy tx uw wi ye zd zx aaa aad)
+aaf (gg pd aae)
+aag (gc aaf)
+aah "arrays"
+aai (ft aah)
+aaj "array-length (\\ (array) (@array-length array))"
+aak (ft aaj)
+aal (fr aak)
+aam "array-get (\\ (array index) (@array-get array index))"
+aan (ft aam)
+aao (fr aan)
+aap "Some examples:"
+aaq (ft aap)
+aar (gm aaq)
+aas "(array-length ([] \"foo\" \"bar\" \"baz\"))"
+aat (ft aas)
+aau (fr aat)
+aav "(array-get ([] \"foo\" \"bar\" \"baz\") 1)"
+aaw (ft aav)
+aax (fr aaw)
+aay (ek aal aao aar aau aax)
+aaz (eg aai aay)
+aba (ec aaz)
+abb "chapter"
+abc (n abb)
+abd "title"
+abe "parts"
+abf (q abd abe)
+abg "lists"
+abh (ft abg)
+abi "text"
+abj (n abi)
+abk "string"
+abl (abk)
+abm "A list is a linked list. It's either (| empty) or (| more (& item ... rest <another list>))."
+abn (abl abm)
+abo (abj abn)
+abp "code"
+abq (n abp)
+abr "cons (\\ (item rest) (| more (& item item rest rest)))"
+abs (abl abr)
+abt (abq abs)
+abu "list-length (\\ (list)\n  (rec list (\\ (rec list) (% list empty 0 (more m) (+ (rec (.rest m)) 1)))))"
+abv (ft abu)
+abw (fr abv)
+abx "(list-length (| more (& item 5 rest (| empty))))"
+aby (ft abx)
+abz (fr aby)
+aca "enum"
+acb "code"
+acc (aca acb)
+acd "string"
+ace (acd)
+acf "array->list (\\ (array) (@array->list array))"
+acg (ace acf)
+ach (acc acg)
+aci "list->array (\\ (list) (@list->array list))"
+acj (ace aci)
+ack (acc acj)
+acl "(array->list ([] 1 2 3))"
+acm (ace acl)
+acn (acc acm)
+aco (z abo abt abw abz ach ack acn)
+acp (abf abh aco)
+acq (abc acp)
+acr "iterators"
+acs (ta acr)
+act "An iterator is a function that takes no arguments and returns (| empty) or (| more (& item T rest Iterator))."
+acu (ta act)
+acv (xg acu)
+acw "chapter"
+acx (aca acw)
+acy "struct"
+acz "title"
+ada "parts"
+adb (acy acz ada)
+adc "list interop"
+add (ace adc)
+ade "array"
+adf (ade)
+adg "list->iter (\\ (list)\n  (rec list (\\ (rec list)\n    (\\ ()\n      (% list\n        empty (| empty)\n        (more m) (| more (& item (.item m) rest (rec (.rest m)))))))))"
+adh (ace adg)
+adi (acc adh)
+adj "iter->list (\\ (iter)\n  (rec iter (\\ (rec iter)\n    (% (iter)\n      empty (| empty)\n      (more m) (| more (& item (.item m) rest (rec (.rest m))))))))"
+adk (ace adj)
+adl (acc adk)
+adm "(list->iter (array->list ([] 1 2 3)))"
+adn (ace adm)
+ado (acc adn)
+adp (adf adi adl ado)
+adq (adb add adp)
+adr (acx adq)
+ads "array interop"
+adt (ace ads)
+adu "array->iter (\\ (array)\n  (rec 0 (\\ (rec i)\n    (\\ ()\n      (if (= i (array-length array))\n        (| empty)\n        (| more (& item (array-get array i) rest (rec (+ i 1)))))))))"
+adv (ace adu)
+adw (acc adv)
+adx "iter->array (\\ (iter) (list->array (iter->list iter)))"
+ady (ace adx)
+adz (acc ady)
+aea "(iter->array (array->iter ([] 1 2 3)))"
+aeb (ace aea)
+aec (acc aeb)
+aed (adf adw adz aec)
+aee (adb adt aed)
+aef (acx aee)
+aeg "map"
+aeh (ta aeg)
+aei "map (\\ (iter mapper)\n  (rec iter (\\ (rec iter)\n    (\\ ()\n      (% (iter)\n        empty (| empty)\n        (more m) (| more (& item (mapper (.item m)) rest (rec (.rest m)))))))))"
+aej (ta aei)
+aek (tf aej)
+ael "enum"
+aem "text"
+aen (ael aem)
+aeo "string"
+aep (aeo)
+aeq "Using it:"
+aer (aep aeq)
+aes (aen aer)
+aet "(iter->array (map (array->iter ([] 1 2 3 4 5)) (\\ (n) (* n 3))))"
+aeu (hl aet)
+aev (hj aeu)
+aew (gk aek aes aev)
+aex (gg aeh aew)
+aey (gc aex)
+aez "chapter"
+afa (ael aez)
+afb "struct"
+afc "title"
+afd "parts"
+afe (afb afc afd)
+aff "filter"
+afg (aep aff)
+afh "array"
+afi (afh)
+afj "code"
+afk (ael afj)
+afl "filter (\\ (iter checker)\n  (rec iter (\\ (next iter)\n    (\\ ()\n      (rec iter (\\ (seek iter)\n        (% (iter)\n          empty (| empty)\n          (more m)\n            (if (checker (.item m))\n              (| more (& item (.item m) rest (next (.rest m))))\n              (seek (.rest m))))))))))"
+afm (aep afl)
+afn (afk afm)
+afo "(iter->array (filter (array->iter ([] 1 2 3 4 5 6 7 8)) (\\ (item) (even? item))))"
+afp (aep afo)
+afq (afk afp)
+afr (afi afn afq)
+afs (afe afg afr)
+aft (afa afs)
+afu "take"
+afv (aep afu)
+afw "take (\\ (iter n)\n  (rec-2 iter n (\\ (rec iter n)\n    (\\ ()\n      (if (= n 0)\n        (| empty)\n        (% (iter)\n          empty (| empty)\n          (more m) (| more (& item (.item m) rest (rec (.rest m) (- n 1))))))))))"
+afx (aep afw)
+afy (afk afx)
+afz "(iter->array (take (array->iter ([] 1 2 3 4 5)) 3))"
+aga (aep afz)
+agb (afk aga)
+agc (afi afy agb)
+agd (afe afv agc)
+age (afa agd)
+agf "skip"
+agg (aep agf)
+agh "skip (\\ (iter n)\n  (\\ ()\n    (rec-2 iter n (\\ (rec iter n)\n      (if (= n 0)\n        (iter)\n        (% (iter)\n          empty (| empty)\n          (more m) (rec (.rest m) (- n 1))))))))"
+agi (aep agh)
+agj (afk agi)
+agk "(iter->array (skip (array->iter ([] 1 2 3 4 5 6 7)) 3))"
+agl (aep agk)
+agm (afk agl)
+agn (afi agj agm)
+ago (afe agg agn)
+agp (afa ago)
+agq "take-while"
+agr (aep agq)
+ags "take-while (\\ (iter checker)\n  (rec iter (\\ (rec iter)\n    (\\ ()\n      (% (iter)\n        empty (| empty)\n        (more m)\n          (if (checker (.item m))\n            (| more (& item (.item m) rest (rec (.rest m))))\n            (| empty)))))))"
+agt (aep ags)
+agu (afk agt)
+agv "(iter->array (take-while (array->iter ([] 1 2 3 4 5 6)) (\\ (n) (< n 4))))"
+agw (aep agv)
+agx (afk agw)
+agy (afi agu agx)
+agz (afe agr agy)
+aha (afa agz)
+ahb "skip-while"
+ahc (aep ahb)
+ahd "skip-while (\\ (iter checker)\n  (\\ ()\n    (rec iter (\\ (drop iter)\n      (% (iter)\n        empty (| empty)\n        (more m)\n          (if (checker (.item m))\n            (drop (.rest m))\n            (| more (& item (.item m) rest (.rest m)))))))))"
+ahe (aep ahd)
+ahf (afk ahe)
+ahg "(iter->array (skip-while (array->iter ([] 1 2 3 4 5 6)) (\\ (n) (< n 3))))"
+ahh (aep ahg)
+ahi (afk ahh)
+ahj (afi ahf ahi)
+ahk (afe ahc ahj)
+ahl (afa ahk)
+ahm "generate"
+ahn (aep ahm)
+aho "generate (\\ (generator)\n  (rec 0 (\\ (rec i) (\\ () (| more (& item (generator i) rest (rec (+ i 1))))))))"
+ahp (aep aho)
+ahq (afk ahp)
+ahr "(iter->array (take (generate (\\ (i) i)) 10))"
+ahs (aep ahr)
+aht (afk ahs)
+ahu (afi ahq aht)
+ahv (afe ahn ahu)
+ahw (afa ahv)
+ahx "fold"
+ahy (aep ahx)
+ahz "fold (\\ (iter initial reducer)\n  (rec-2 initial iter (\\ (rec state iter)\n    (% (iter)\n      empty state\n      (more m) (rec (reducer state (.item m)) (.rest m))))))"
+aia (aep ahz)
+aib (afk aia)
+aic "(fold (array->iter ([] 1 2 3)) 0 +)"
+aid (aep aic)
+aie (afk aid)
+aif (afi aib aie)
+aig (afe ahy aif)
+aih (afa aig)
+aii "reduce"
+aij (aep aii)
+aik "reduce (\\ (iter reducer)\n  (% (iter)\n    empty (crash \"called reduce on empty iterator\")\n    (more m) (fold (.rest m) (.item m) reducer)))"
+ail (aep aik)
+aim (afk ail)
+ain "(reduce (array->iter ([] 1 2 3 4)) +)"
+aio (aep ain)
+aip (afk aio)
+aiq (afi aim aip)
+air (afe aij aiq)
+ais (afa air)
+ait "concat"
+aiu (aep ait)
+aiv "concat (\\ (a b)\n  (rec a (\\ (rec a)\n    (\\ ()\n      (% (a)\n        empty (b)\n        (more m) (| more (& item (.item m) rest (rec (.rest m)))))))))"
+aiw (aep aiv)
+aix (afk aiw)
+aiy "(iter->array (concat (array->iter ([] 1 2 3)) (array->iter ([] 4 5 6))))"
+aiz (aep aiy)
+aja (afk aiz)
+ajb "concat-3 (\\ (a b c) (concat a (concat b c)))"
+ajc (aep ajb)
+ajd (afk ajc)
+aje "concat-4 (\\ (a b c d) (concat a (concat-3 b c d)))"
+ajf (aep aje)
+ajg (afk ajf)
+ajh "concat-5 (\\ (a b c d e) (concat a (concat-4 b c d e)))"
+aji (aep ajh)
+ajj (afk aji)
+ajk "concat-all (\\ (iters) (fold iters (array->iter ([])) (\\ (acc it) (concat acc it))))"
+ajl (aep ajk)
+ajm (afk ajl)
+ajn (afi aix aja ajd ajg ajj ajm)
+ajo (afe aiu ajn)
+ajp (afa ajo)
+ajq "length"
+ajr (aep ajq)
+ajs "length (\\ (iter) (fold iter 0 (\\ (n it) (+ n 1))))"
+ajt (aep ajs)
+aju (afk ajt)
+ajv (afi aju)
+ajw (afe ajr ajv)
+ajx (afa ajw)
+ajy "any"
+ajz (aep ajy)
+aka "any (\\ (iter checker)\n  (rec iter (\\ (rec iter)\n    (% (iter)\n      empty false\n      (more m) (if (checker (.item m)) true (rec (.rest m)))))))"
+akb (aep aka)
+akc (afk akb)
+akd "(any (array->iter ([] 1 3 5 6)) even?)"
+ake (aep akd)
+akf (afk ake)
+akg (afi akc akf)
+akh (afe ajz akg)
+aki (afa akh)
+akj "find"
+akk (aep akj)
+akl "find (\\ (iter checker)\n  (rec iter (\\ (rec iter)\n    (% (iter)\n      empty (| none)\n      (more m) (if (checker (.item m)) (| some (.item m)) (rec (.rest m)))))))"
+akm (aep akl)
+akn (afk akm)
+ako "(find (array->iter ([] 1 2 3 4)) even?)"
+akp (aep ako)
+akq (afk akp)
+akr "(find (array->iter ([] 1 3 5 7)) even?)"
+aks (aep akr)
+akt (afk aks)
+aku (afi akn akq akt)
+akv (afe akk aku)
+akw (afa akv)
+akx "indexed"
+aky (aep akx)
+akz "indexed (\\ (iter)\n  (rec-2 iter 0 (\\ (rec iter index)\n    (\\ ()\n      (% (iter)\n        empty (| empty)\n        (more m)\n          (| more (& item (& index index item (.item m)) rest (rec (.rest m) (+ index 1)))))))))"
+ala (aep akz)
+alb (afk ala)
+alc "(iter->array (indexed (array->iter ([] \"foo\" \"bar\" \"baz\"))))"
+ald (aep alc)
+ale (afk ald)
+alf (afi alb ale)
+alg (afe aky alf)
+alh (afa alg)
+ali (gk acv adr aef aey aft age agp aha ahl ahw aih ais ajp ajx aki akw alh)
+alj (gg acs ali)
+alk (gc alj)
+all "enum"
+alm "chapter"
+aln (all alm)
+alo "struct"
+alp "title"
+alq "parts"
+alr (alo alp alq)
+als "string"
+alt (als)
+alu "more list and array stuff"
+alv (alt alu)
+alw "array"
+alx (alw)
+aly "enum"
+alz "chapter"
+ama (aly alz)
+amb "struct"
+amc "title"
+amd "parts"
+ame (amb amc amd)
+amf "filled"
+amg (alt amf)
+amh "array"
+ami (amh)
+amj "code"
+amk (aly amj)
+aml "filled-list (\\ (length item)\n  (rec 0 (\\ (rec i) (if (= i length) (| empty) (| more (& item item rest (rec (+ i 1))))))))"
+amm (alt aml)
+amn (amk amm)
+amo "filled-array (\\ (length item) (list->array (filled-list length item)))"
+amp (alt amo)
+amq (amk amp)
+amr "text"
+ams (aly amr)
+amt "Examples:"
+amu (alt amt)
+amv (ams amu)
+amw "(filled-list 2 \"hi\")"
+amx (alt amw)
+amy (amk amx)
+amz "(filled-array 2 \"hi\")"
+ana (alt amz)
+anb (amk ana)
+anc (ami amn amq amv amy anb)
+and (ame amg anc)
+ane (ama and)
+anf "slice"
+ang (alt anf)
+anh "list-slice (\\ (list from to) (iter->list (take (skip (list->iter list) from) (- to from))))"
+ani (alt anh)
+anj (amk ani)
+ank "array-slice (\\ (array from to)\n  (iter->array (take (skip (array->iter array) from) (- to from))))"
+anl (alt ank)
+anm (amk anl)
+ann "Examples:"
+ano (alt ann)
+anp (ams ano)
+anq "(array-slice ([] 1 2 3 4 5 6 7) 3 7)"
+anr (alt anq)
+ans (amk anr)
+ant (ami anj anm anp ans)
+anu (ame ang ant)
+anv (ama anu)
+anw "update"
+anx (alt anw)
+any "list-update (\\ (list index item)\n  (iter->list\n    (map (indexed (list->iter list)) (\\ (ind) (if (= (.index ind) index) item (.item ind))))))"
+anz (alt any)
+aoa (amk anz)
+aob "array-update (\\ (array index item)\n  (iter->array\n    (map (indexed (array->iter array)) (\\ (ind) (if (= (.index ind) index) item (.item ind))))))"
+aoc (alt aob)
+aod (amk aoc)
+aoe "Example:"
+aof (alt aoe)
+aog (ams aof)
+aoh "(array-update ([] 1 2 3 4 5) 2 \"foo\")"
+aoi (alt aoh)
+aoj (amk aoi)
+aok (ami aoa aod aog aoj)
+aol (ame anx aok)
+aom (ama aol)
+aon "remove"
+aoo (alt aon)
+aop "list-remove (\\ (list index)\n  (iter->list (concat (take (list->iter list) index) (skip (list->iter list) (+ index 1)))))"
+aoq (alt aop)
+aor (amk aoq)
+aos "array-remove (\\ (array index)\n  (iter->array\n    (concat (take (array->iter array) index) (skip (array->iter array) (+ index 1)))))"
+aot (alt aos)
+aou (amk aot)
+aov "Example:"
+aow (alt aov)
+aox (ams aow)
+aoy "(array-remove ([] 1 2 3 4 5) 3)"
+aoz (alt aoy)
+apa (amk aoz)
+apb (ami aor aou aox apa)
+apc (ame aoo apb)
+apd (ama apc)
+ape "insert"
+apf (alt ape)
+apg "code"
+aph (all apg)
+api "string"
+apj (api)
+apk "list-insert (\\ (list index item)\n  (iter->list\n    (concat-3\n      (take (list->iter list) index)\n      (list->iter (| more (& item item rest (| empty))))\n      (skip (list->iter list) index))))"
+apl (apj apk)
+apm (aph apl)
+apn "array-insert (\\ (array index item)\n  (iter->array\n    (concat-3\n      (take (array->iter array) index)\n      (list->iter (| more (& item item rest (| empty))))\n      (skip (array->iter array) index))))"
+apo (apj apn)
+app (aph apo)
+apq "(array-insert ([] 1 2 3 4 5) 2 \"foo\")"
+apr (apj apq)
+aps (aph apr)
+apt (alx apm app aps)
+apu (alr apf apt)
+apv (aln apu)
+apw "append"
+apx (apj apw)
+apy "list-append (\\ (list item) (list-insert list (list-length list) item))"
+apz (apj apy)
+aqa (aph apz)
+aqb "array-append (\\ (array item) (array-insert array (array-length array) item))"
+aqc (apj aqb)
+aqd (aph aqc)
+aqe "(array-append ([] 1 2 3) \"foo\")"
+aqf (apj aqe)
+aqg (aph aqf)
+aqh (alx aqa aqd aqg)
+aqi (alr apx aqh)
+aqj (aln aqi)
+aqk "get"
+aql (apj aqk)
+aqm "list-get (\\ (list index) (% ((skip (list->iter list) index)) (more m) (.item m)))"
+aqn (apj aqm)
+aqo (aph aqn)
+aqp "text"
+aqq (all aqp)
+aqr "array-get is already implemented (using a builtin)."
+aqs (apj aqr)
+aqt (aqq aqs)
+aqu (alx aqo aqt)
+aqv (alr aql aqu)
+aqw (aln aqv)
+aqx "swap"
+aqy (apj aqx)
+aqz "list-swap (\\ (list a b)\n  (iter->list\n    (map\n      (indexed (list->iter list))\n      (\\ (ind)\n        (cond\n          (= (.index ind) a) (list-get list b)\n          (= (.index ind) b) (list-get list a)\n          else (.item ind))))))"
+ara (apj aqz)
+arb (aph ara)
+arc "array-swap (\\ (array a b)\n  (iter->array\n    (map\n      (indexed (array->iter array))\n      (\\ (ind)\n        (cond\n          (= (.index ind) a) (array-get array b)\n          (= (.index ind) b) (array-get array a)\n          else (.item ind))))))"
+ard (apj arc)
+are (aph ard)
+arf (alx arb are)
+arg (alr aqy arf)
+arh (aln arg)
+ari "reverse"
+arj (apj ari)
+ark "list-reverse (\\ (list)\n  (rec-2 list (| empty) (\\ (rec to-reverse reversed)\n    (% to-reverse\n      empty reversed\n      (more m) (rec (.rest m) (| more (& item (.item m) rest reversed)))))))"
+arl (apj ark)
+arm (aph arl)
+arn "array-reverse (\\ (array) (list->array (list-reverse (array->list array))))"
+aro (apj arn)
+arp (aph aro)
+arq "(array-reverse ([] 1 2 3 4 5))"
+arr (apj arq)
+ars (aph arr)
+art (alx arm arp ars)
+aru (alr arj art)
+arv (aln aru)
+arw (alx ane anv aom apd apv aqj aqw arh arv)
+arx (alr alv arw)
+ary (aln arx)
+arz "string"
+asa (apj arz)
+asb "chapter"
+asc (all asb)
+asd "title"
+ase "parts"
+asf (alo asd ase)
+asg "bytes conversion"
+ash (apj asg)
+asi "string->bytes (\\ (string) (@string->bytes string))"
+asj (apj asi)
+ask (aph asj)
+asl "bytes->string (\\ (bytes) (@bytes->string bytes))"
+asm (apj asl)
+asn (aph asm)
+aso (alx ask asn)
+asp (asf ash aso)
+asq (asc asp)
+asr "chapter"
+ass (all asr)
+ast "title"
+asu "parts"
+asv (alo ast asu)
+asw "length (in bytes)"
+asx (apj asw)
+asy "string-length (\\ (string) (@array-length (string->bytes string)))"
+asz (apj asy)
+ata (aph asz)
+atb (alx ata)
+atc (asv asx atb)
+atd (ass atc)
+ate "concat"
+atf (apj ate)
+atg "string-concat (\\ (a b)\n  (bytes->string\n    (iter->array\n      (concat (array->iter (string->bytes a)) (array->iter (string->bytes b))))))"
+ath (apj atg)
+ati (aph ath)
+atj "(string-concat \"foo\" \"bar\")"
+atk (apj atj)
+atl (aph atk)
+atm "string-concat-3 (\\ (a b c) (string-concat a (string-concat b c)))"
+atn (apj atm)
+ato (aph atn)
+atp "string-concat-4 (\\ (a b c d) (string-concat a (string-concat b c d)))"
+atq (apj atp)
+atr (aph atq)
+ats "string-concat-5 (\\ (a b c d e) (string-concat a (string-concat b c d e)))"
+att (apj ats)
+atu (aph att)
+atv (alx ati atl ato atr atu)
+atw (alr atf atv)
+atx (aln atw)
+aty "slice"
+atz (apj aty)
+aua "string-slice (\\ (string from to)\n  (bytes->string (array-slice (string->bytes string) from to)))"
+aub (apj aua)
+auc (aph aub)
+aud (alx auc)
+aue (alr atz aud)
+auf (aln aue)
+aug "replace range (todo)"
+auh (apj aug)
+aui "string-replace-range "
+auj (apj aui)
+auk (aph auj)
+aul (alx auk)
+aum (asv auh aul)
+aun (ass aum)
+auo "starts with"
+aup (apj auo)
+auq "string-starts-with (\\ (string prefix)\n  (if (> (string-length prefix) (string-length string))\n    false\n    (= (string-slice string 0 (string-length prefix)) prefix)))"
+aur (apj auq)
+aus (aph aur)
+aut (alx aus)
+auu (alr aup aut)
+auv (aln auu)
+auw "ascii chars"
+aux (apj auw)
+auy "Given a string literal like \"a\", return an int with the value of the first ASCII byte."
+auz (apj auy)
+ava (aqq auz)
+avb "ascii-char (\\ (literal) (array-get (string->bytes literal) 0))"
+avc (apj avb)
+avd (aph avc)
+ave "(ascii-char \"a\")"
+avf (apj ave)
+avg (aph avf)
+avh (alx ava avd avg)
+avi (alr aux avh)
+avj (aln avi)
+avk (alx asq atd atx auf aun auv avj)
+avl (alr asa avk)
+avm (aln avl)
+avn (da di dz fz iu kh pb aag aba acq alk ary avm)
+avo (cw cy avn)
+avp (cs avo)
+avq "the render system"
+avr (jy avq)
+avs "text"
+avt (ju avs)
+avu "Rendering works using drawing instructions."
+avv (jy avu)
+avw (avt avv)
+avx "DrawingInstruction = (|\n  nothing\n  fill-path (& path Path color Color)\n  translate (& by Point what DrawingInstruction)\n  all ([] DrawingInstruction))"
+avy (jy avx)
+avz (avt avy)
+awa "Point = (& x Float y Float)"
+awb (jy awa)
+awc (avt awb)
+awd "Color = (& r Int g Int b Int)"
+awe (jy awd)
+awf (avt awe)
+awg "Path = ([] PathSegment)"
+awh (jy awg)
+awi (avt awh)
+awj "PathSegment = (| move-to Point line-to Point)"
+awk (jy awj)
+awl (avt awk)
+awm "chapter"
+awn (ju awm)
+awo "struct"
+awp "title"
+awq "parts"
+awr (awo awp awq)
+aws "why drawing instructions and not pixels?"
+awt (jy aws)
+awu "array"
+awv (awu)
+aww "Initially, I tried to communicate with the outside world using pixel graphics. However, I believe that's not the right move as pixels are more difficult to handle in code. Having pixels (or some concept ofa texture) within this notebook requires either:\n- mutable values (which don't exist in here), or\n- lots of copying on every texture modification, or\n- a super-smart optimizing compiler (which is useful but it has the sort of slow-by-default-and-you-have-to-trust-the-black-box-to-work feeling I don't like), or\n- inefficient storage of individual pixels in trees."
+awx (jy aww)
+awy (avt awx)
+awz "By communicating the intent on a quite high-level, we can instead make use of GPUs when turning the high-level drawing instructions into pixels. This is also similar to how Flutter works: The Dart VM is decently fast, but not super fast, so it just emits drawing instructions that the lower-level C++ engine takes and turns into pixels."
+axa (jy awz)
+axb (avt axa)
+axc (awv awy axb)
+axd (awr awt axc)
+axe (awn axd)
+axf "Within this notebook, code usually returns structs of the form (& draw DrawingInstruction width Float height Float) rather than just a raw instruction."
+axg (jy axf)
+axh (avt axg)
+axi "point, size"
+axj (jy axi)
+axk "point (\\ (x y) (& x x y y))"
+axl (jy axk)
+axm (jw axl)
+axn "(point 2. 3.)"
+axo (jy axn)
+axp (jw axo)
+axq "origin (point 0. 0.)"
+axr (jy axq)
+axs (jw axr)
+axt (awv axm axp axs)
+axu (awr axj axt)
+axv (awn axu)
+axw "enum"
+axx "chapter"
+axy (axw axx)
+axz "struct"
+aya "title"
+ayb "parts"
+ayc (axz aya ayb)
+ayd "color"
+aye (jy ayd)
+ayf "array"
+ayg (ayf)
+ayh "is-digit (\\ (c) (and (>= c (ascii-char \"0\")) (<= c (ascii-char \"9\"))))"
+ayi (apj ayh)
+ayj (aph ayi)
+ayk "enum"
+ayl "chapter"
+aym (ayk ayl)
+ayn "struct"
+ayo "title"
+ayp "parts"
+ayq (ayn ayo ayp)
+ayr "color by hex"
+ays (jy ayr)
+ayt "array"
+ayu (ayt)
+ayv "code"
+ayw (ayk ayv)
+ayx "string"
+ayy (ayx)
+ayz "parse-hex (\\ (string)\n  (rec-2 0 (array->list (string->bytes string)) (\\ (rec value chars)\n    (% chars\n      empty value\n      (more m) (:\n        c (.item m)\n        digit\n          (cond\n            (and (>= c (ascii-char \"0\")) (<= c (ascii-char \"9\"))) (- c (ascii-char \"0\"))\n            (and (>= c (ascii-char \"a\")) (<= c (ascii-char \"f\"))) (+ 10 (- c (ascii-char \"a\")))\n            else (crash \"invalid hex char\"))\n        (rec (+ (* value 16) digit) (.rest m)))))))"
+aza (ayy ayz)
+azb (ayw aza)
+azc "(parse-hex \"4f\")"
+azd (ayy azc)
+aze (ayw azd)
+azf "color (\\ (hex) (:\n  _ (assert (= (string-length hex) 7))\n  _ (assert (= (string-slice hex 0 1) \"#\"))\n  (&\n    r (parse-hex (string-slice hex 1 3))\n    g (parse-hex (string-slice hex 3 5))\n    b (parse-hex (string-slice hex 5 7)))))"
+azg (jy azf)
+azh (jw azg)
+azi "(color \"#ff0000\")"
+azj (ayy azi)
+azk (ayw azj)
+azl "(color \"#00ff00\")"
+azm (ayy azl)
+azn (ayw azm)
+azo "(color \"#0000ff\")"
+azp (ayy azo)
+azq (ayw azp)
+azr (ayu azb aze azh azk azn azq)
+azs (ayq ays azr)
+azt (aym azs)
+azu "black (color \"#000000\")"
+azv (ayy azu)
+azw (ayw azv)
+azx (ayg ayj azt azw)
+azy (ayc aye azx)
+azz (axy azy)
+baa (gk avw avz awc awf awi awl axe axh axv azz)
+bab (gg avr baa)
+bac (gc bab)
+bad "enum"
+bae "chapter"
+baf (bad bae)
+bag "struct"
+bah "title"
+bai "parts"
+baj (bag bah bai)
+bak "string"
+bal (bak)
+bam "font"
+ban (bal bam)
+bao "array"
+bap (bao)
+baq "code"
+bar (bad baq)
+bas "string"
+bat (bas)
+bau "preview-path (\\ (path)\n  (| widget (& draw (| fill-path (& path path color black)) width 10. height 10.)))"
+bav (bat bau)
+baw (bar bav)
+bax "parse-path (\\ (string)\n  (rec (string->chars-list string) (\\ (rec string)\n    (% string\n      empty (| empty)\n      (more m)\n        )))\n)"
+bay (bat bax)
+baz (bar bay)
+bba "(parse-path \"M 0 10 L 4 0 L 8 10 L 7 10 L 4 2 L 1 10\")"
+bbb (bat bba)
+bbc (bar bbb)
+bbd "code"
+bbe (bad bbd)
+bbf "(preview-path ([]\n  (| move-to (& x 0. y 10.))\n  (| line-to (& x 4. y 0.))\n  (| line-to (& x 8. y 10.))\n  (| line-to (& x 6. y 10.))\n  (| line-to (& x 4. y 4.))\n  (| line-to (& x 2. y 10.))))"
+bbg (bat bbf)
+bbh (bbe bbg)
+bbi "text"
+bbj (bad bbi)
+bbk "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+bbl (bat bbk)
+bbm (bbj bbl)
+bbn (bap baw baz bbc bbh bbm)
+bbo (baj ban bbn)
+bbp (baf bbo)
+bbq "keyboard"
+bbr (jy bbq)
+bbs "no-modifiers? (\\ (key) (and-3 (not (.control key)) (not (.shift key)) (not (.alt key))))"
+bbt (jy bbs)
+bbu (jw bbt)
+bbv "ctrl-modifier? (\\ (key) (and-3 (.control key) (not (.shift key)) (not (.alt key))))"
+bbw (jy bbv)
+bbx (jw bbw)
+bby "alt-modifier? (\\ (key) (and-3 (not (.control key)) (not (.shift key)) (.alt key)))"
+bbz (jy bby)
+bca (jw bbz)
+bcb "shift-modifier? (\\ (key) (and-3 (not (.control key)) (.shift key) (not (.alt key))))"
+bcc (jy bcb)
+bcd (jw bcc)
+bce "ctrl-shift-modifiers? (\\ (key) (and-3 (.control key) (.shift key) (not (.alt key))))"
+bcf (jy bce)
+bcg (jw bcf)
+bch "shift-alt-modifiers? (\\ (key) (and-3 (not (.control key)) (.shift key) (.alt key)))"
+bci (jy bch)
+bcj (jw bci)
+bck "key-escape? (\\ (key) (and (= (.keycode key) 256) (no-modifiers? key)))"
+bcl (jy bck)
+bcm (jw bcl)
+bcn (awv bbu bbx bca bcd bcg bcj bcm)
+bco (awr bbr bcn)
+bcp (awn bco)
+bcq "string"
+bcr (bcq)
+bcs "widgets"
+bct (bcr bcs)
+bcu "enum"
+bcv "code"
+bcw (bcu bcv)
+bcx "string"
+bcy (bcx)
+bcz "preview (\\ (widget) (| widget widget))"
+bda (bcy bcz)
+bdb (bcw bda)
+bdc "enum"
+bdd "chapter"
+bde (bdc bdd)
+bdf "struct"
+bdg "title"
+bdh "parts"
+bdi (bdf bdg bdh)
+bdj "empty-box"
+bdk (bcr bdj)
+bdl "array"
+bdm (bdl)
+bdn "enum"
+bdo "code"
+bdp (bdn bdo)
+bdq "empty-box (\\ (width height) (& draw (| nothing) width width height height))"
+bdr (bcr bdq)
+bds (bdp bdr)
+bdt "code"
+bdu (bdc bdt)
+bdv "string"
+bdw (bdv)
+bdx "(preview (empty-box 10. 10.))"
+bdy (bdw bdx)
+bdz (bdu bdy)
+bea (bdm bds bdz)
+beb (bdi bdk bea)
+bec (bde beb)
+bed "chapter"
+bee (hs bed)
+bef "struct"
+beg "title"
+beh "parts"
+bei (bef beg beh)
+bej "string"
+bek (bej)
+bel "colored"
+bem (bek bel)
+ben "array"
+beo (ben)
+bep "colored (\\ (color child) (:\n  width (.width child)\n  height (.height child)\n  (&\n    draw\n      (| all ([]\n        (| fill-path (&\n          path ([]\n            (| move-to (& x 0. y 0.))\n            (| line-to (& x width y 0.))\n            (| line-to (& x width y height))\n            (| line-to (& x 0. y height)))\n          color color))\n        (.draw child)))\n    width width\n    height height)))"
+beq (hw bep)
+ber (hu beq)
+bes "enum"
+bet "code"
+beu (bes bet)
+bev "string"
+bew (bev)
+bex "(preview (colored (color \"#3cad82\") (empty-box 120. 20.)))"
+bey (bew bex)
+bez (beu bey)
+bfa (beo ber bez)
+bfb (bei bem bfa)
+bfc (bee bfb)
+bfd "chapter"
+bfe (hs bfd)
+bff "title"
+bfg "parts"
+bfh (bef bff bfg)
+bfi "sized box"
+bfj (hw bfi)
+bfk "sized-box (\\ (width height child) (& draw (.draw child) width width height height))"
+bfl (hw bfk)
+bfm (hu bfl)
+bfn (beo bfm)
+bfo (bfh bfj bfn)
+bfp (bfe bfo)
+bfq "padding"
+bfr (hw bfq)
+bfs "text"
+bft (hs bfs)
+bfu "Padding accepts either a float (for uniform padding on all sides) or a struct (& left right top bottom) of floats."
+bfv (hw bfu)
+bfw (bft bfv)
+bfx "padding (\\ (padding child) (:\n  left (if (float? padding) padding (.left padding))\n  right (if (float? padding) padding (.right padding))\n  top (if (float? padding) padding (.top padding))\n  bottom (if (float? padding) padding (.bottom padding))\n  (&\n    draw (| translate (& by (& x left y top) what (.draw child)))\n    width (+ (.width child) (+ left right))\n    height (+ (.height child) (+ top bottom)))))"
+bfy (hw bfx)
+bfz (hu bfy)
+bga "(preview\n  (colored (color \"#000000\") (padding 2. (colored (color \"#ffcc00\") (empty-box 10. 10.)))))"
+bgb (hw bga)
+bgc (hu bgb)
+bgd (beo bfw bfz bgc)
+bge (bei bfr bgd)
+bgf (bee bge)
+bgg "enum"
+bgh "chapter"
+bgi (bgg bgh)
+bgj "struct"
+bgk "title"
+bgl "parts"
+bgm (bgj bgk bgl)
+bgn "row"
+bgo (hw bgn)
+bgp "array"
+bgq (bgp)
+bgr "padded-row (\\ (padding children) (:\n  res\n    (rec-2 (array->list children) 0. (\\ (rec children x)\n      (% children\n        empty (& draw (| empty) width 0. height 0.)\n        (more m) (:\n          child (.item m)\n          rest (rec (.rest m) (+ x (.width child)))\n          (&\n            draw (| more (&\n              item (| translate (& by (& x x y 0.) what (.draw child)))\n              rest (.draw rest)))\n            width (+ (.width child) (+ padding (.width rest)))\n            height (max (.height child) (.height rest)))))))\n  (&\n    draw (| all (list->array (.draw res)))\n    width (- (.width res) padding)\n    height (.height res))))"
+bgs (hw bgr)
+bgt (hu bgs)
+bgu "row (\\ (children) (padded-row 0. children))"
+bgv (hw bgu)
+bgw (hu bgv)
+bgx "enum"
+bgy "code"
+bgz (bgx bgy)
+bha "(preview\n  (row ([]\n    (colored (color \"#fd4040\") (empty-box 40. 10.))\n    (colored (color \"#ffbb20\") (empty-box 20. 10.))\n    (colored (color \"#7074a0\") (empty-box 10. 10.)))))"
+bhb (bal bha)
+bhc (bgz bhb)
+bhd (bgq bgt bgw bhc)
+bhe (bgm bgo bhd)
+bhf (bgi bhe)
+bhg (da bdb bec bfc bfp bgf bhf)
+bhh (cw bct bhg)
+bhi (cs bhh)
+bhj "enum"
+bhk "chapter"
+bhl (bhj bhk)
+bhm "struct"
+bhn "title"
+bho "parts"
+bhp (bhm bhn bho)
+bhq "string"
+bhr (bhq)
+bhs "Einkaufsliste"
+bht (bhr bhs)
+bhu "array"
+bhv (bhu)
+bhw "text"
+bhx (bhj bhw)
+bhy "string"
+bhz (bhy)
+bia "Keeese"
+bib (bhz bia)
+bic (bhx bib)
+bid "enum"
+bie "text"
+bif (bid bie)
+big "Brot"
+bih (bhr big)
+bii (bif bih)
+bij "Milch"
+bik (bhz bij)
+bil (bhx bik)
+bim (bhv bic bii bil)
+bin (bhp bht bim)
+bio (bhl bin)
+bip "enum"
+biq "chapter"
+bir (bip biq)
+bis "struct"
+bit "title"
+biu "parts"
+biv (bis bit biu)
+biw "string"
+bix (biw)
+biy "optimize"
+biz (bix biy)
+bja "array"
+bjb (bja)
+bjc "code"
+bjd (bip bjc)
+bje "optimize-expr (\\ (expr)\n  (rec expr (\\ (optimize expr)\n    (% expr\n      (value v) (| value v)\n      (name n) (| name n)\n      (call call) (:\n        function (optimize (.function call))\n        args (iter->array (map (array->iter (.arguments call)) (\\ (arg) (optimize expr))))\n        (| call (& function function arguments args)))\n      _ (todo (| optimize expr))))))"
+bjf (bix bje)
+bjg (bjd bjf)
+bjh "optimize (\\ (fun) (@function (@arguments fun) (optimize-expr (@body fun)) (&)))"
+bji (bix bjh)
+bjj (bjd bji)
+bjk "(optimize (\\ (a b) (+ a b)))"
+bjl (bix bjk)
+bjm (bjd bjl)
+bjn (bjb bjg bjj bjm)
+bjo (biv biz bjn)
+bjp (bir bjo)
+bjq "debug"
+bjr (abl bjq)
+bjs "(@body (\\ (a b) (+ a b)))"
+bjt (bal bjs)
+bju (bgz bjt)
+bjv "fib (\\ (n) (rec n (\\ (rec n) (if (< n 2) 1 (+ (rec (- n 1)) (rec (- n 2)))))))"
+bjw (abl bjv)
+bjx (abq bjw)
+bjy "(fib 10)"
+bjz (abl bjy)
+bka (abq bjz)
+bkb "eval (\\ (code)\n  (rec code (\\ (eval code)\n    (% code\n      (value v) (& result v code (| value v))\n      (name n) (& result n code (| name n))\n      (call c) (:\n        fun (eval (.function c))\n        args (iter->array (map (array->iter (.arguments c)) (\\ (arg) (eval arg))))\n        (&\n          result\n            (@call (.result fun) (iter->array (map (array->iter args) (\\ (arg) (.result arg)))))\n          code (| call (& function fun arguments args))))\n      ))))"
+bkc (bix bkb)
+bkd (bjd bkc)
+bke "debug (\\ (fun) (eval (@body fun)))"
+bkf (abl bke)
+bkg (abq bkf)
+bkh "enum"
+bki "code"
+bkj (bkh bki)
+bkk "string"
+bkl (bkk)
+bkm "(debug (\\ () (fib 3)))"
+bkn (bkl bkm)
+bko (bkj bkn)
+bkp (bjb bju bjx bka bkd bkg bko)
+bkq (biv bjr bkp)
+bkr (bir bkq)
+bks (m cp avp bac bbp bcp bhi bio bjp bkr)
+bkt (g k bks)
+bku (c bkt)
+export bku

@@ -50,19 +50,20 @@ pub fn main(init: std.process.Init) !void {
     // const stdout = &stdout_w.interface;
     // const stdin = &stdin_r.interface;
 
-    var heap = try Heap.init(ally, 300_000_000);
+    var heap = try Heap.init(ally, 600_000_000);
     const start_of_heap = heap.checkpoint();
     var vm = try Vm.Default.init(&heap, ally);
 
-    const objects_code = try Io.Dir.cwd().readFileAlloc(io, "src/bootstrap.objects", ally, Io.Limit.unlimited);
-    const olive_code = try Io.Dir.cwd().readFileAlloc(io, "src/bootstrap.olive", ally, Io.Limit.unlimited);
-    const pear_code = try Io.Dir.cwd().readFileAlloc(io, "src/bootstrap.pear", ally, Io.Limit.unlimited);
+    const objects_code = try Io.Dir.cwd().readFileAlloc(io, "src/bootstrap.objects", ally, .unlimited);
+    const olive_code = try Io.Dir.cwd().readFileAlloc(io, "src/bootstrap.olive", ally, .unlimited);
+    const pear_code = try Io.Dir.cwd().readFileAlloc(io, "src/bootstrap.pear", ally, .unlimited);
 
     const compile_olive = step: {
         var step = try BootstrapStep.start(io, "Loading the Olive compiler.", &heap);
         defer step.end(io);
         break :step Value.from(try object_loader.load(ally, &heap, objects_code));
     };
+    std.debug.print("objects:\n{f}\n", .{compile_olive.obj});
     const olive = step: {
         var step = try BootstrapStep.start(io, "Compiling Olive.", &heap);
         defer step.end(io);
@@ -98,61 +99,16 @@ pub fn main(init: std.process.Init) !void {
         break :step Value.from(try vm.garbage_collect(start_of_heap, olive_self_hosted_2.field("compile_pear").obj));
     };
 
-    // var defs = std.StringHashMapUnmanaged(Value).empty;
-    // while (true) {
-    //     try stdout.print(">> ", .{});
-    //     try stdout.flush();
-    //     const input = std.mem.trim(u8, try stdin.takeDelimiterInclusive('\n'), " \n");
-    //     if (std.mem.eql(u8, input, "quit")) break;
-    //     if (std.mem.eql(u8, input, "names")) {
-    //         var it = defs.iterator();
-    //         while (it.next()) |def| {
-    //             try stdout.print("- {s}\n", .{def.key_ptr.*});
-    //         }
-    //         continue;
-    //     }
-    //     var cursor: usize = 0;
-    //     const name_tmp = object_loader.parse_name(input, &cursor) orelse {
-    //         try stdout.print("Expected name.", .{});
-    //         continue;
-    //     };
-    //     const name = try ally.alloc(u8, name_tmp.len);
-    //     std.mem.copyForwards(u8, name, name_tmp);
-    //     const after_name = std.mem.trim(u8, input[cursor..], " \n");
-    //     if (after_name.len == 0) {
-    //         if (defs.get(name)) |def| {
-    //             try stdout.print("{f}\n", .{def});
-    //         } else {
-    //             try stdout.print("Unknown name {s}.\n", .{name});
-    //         }
-    //         continue;
-    //     }
-    //     const value_creator = compile_pear.call(&vm, &.{
-    //         try Value.new_string(&heap, after_name),
-    //     }) catch |e| {
-    //         try stdout.print("Crashed: {any}\n", .{e});
-    //         continue;
-    //     };
-    //     const value = try value_creator.call(&vm, &.{});
-    //     // const object = object_loader.parse_obj(input, &cursor, &heap, ally, defs) catch |e| {
-    //     //     try stdout.print("Error: {any}\n", .{e});
-    //     //     continue;
-    //     // } orelse {
-    //     //     try stdout.print("Expected expression.\n", .{});
-    //     //     continue;
-    //     // };
-    //     try defs.put(ally, name, value);
-    //     try stdout.print("Created {s}:\n{f}\n", .{ name, value });
-    // }
-
-    const pear = step: {
-        var step = try BootstrapStep.start(io, "Compiling Pear.", &heap);
-        defer step.end(io);
-        const result = try compile_pear.call(&vm, &.{try Value.new_string(&heap, pear_code)});
-        break :step Value.from(try vm.garbage_collect(start_of_heap, result.obj));
-    };
-    const app = try pear.call(&vm, &.{});
-    std.debug.print("app:\n{f}\n", .{app});
+    std.debug.print(io, "Running notebook.\n", .{});
+    const compiled = try compile_pear.call(&vm, &.{try Value.new_string(&heap, pear_code)});
+    const make_app = try compiled.call(&vm, &.{});
+    const book = Value.from(try object_loader.load(
+        ally,
+        &heap,
+        try Io.Dir.cwd().readFileAlloc(io, "src/data.objects", ally, Io.Limit.unlimited),
+    ));
+    const app_val = try make_app.call(&vm, &.{book});
+    const app = Value.from(try vm.garbage_collect(start_of_heap, app_val.obj));
 
     try App.run(ally, io, &heap, &vm, app, "src/data.objects");
 }

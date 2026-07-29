@@ -1109,7 +1109,7 @@
 
  handle-text-edit-with-cursor (\ (string width cursor event)
   (% event
-   (pressed-key key)
+   (key-pressed key)
     (cond
      (key-enter? key) (:
       new-string (string-replace-range string (cursor-selection cursor) "\n")
@@ -1402,7 +1402,7 @@
         active line-end
         desired-x (text-x-offset string width line-end))))
      else (& string string cursor cursor))
-   (char char)
+   (char-entered char)
     (:
      c (ascii-char char)
     (if
@@ -1422,7 +1422,7 @@
 
  handle-text-edit (\ (string event)
   (% event
-   (pressed-key key)
+   (key-pressed key)
     (cond
      (key-backspace? key)
       (if (> (string-length string) 0)
@@ -1430,7 +1430,7 @@
        string)
      (key-enter? key) (string-concat string "\n")
      else string)
-   (char char) (string-concat string char)))
+   (char-entered char) (string-concat string char)))
 
  orchard-color (color "#2e6402")
  cursor-color (color "#ffcb10")
@@ -1553,11 +1553,11 @@
   (and-4 (!= char " ") (!= char "\n") (!= char "(") (!= char ")")))
  identifier-handle (\ (identifier event)
   (% event
-   (pressed-key key)
+   (key-pressed key)
     (cond
      (action-up? key) (| yield-focus identifier)
      else (| update (handle-text-edit identifier event)))
-   (char char)
+   (char-entered char)
     (if (= char " ")
      (| yield-focus identifier)
      (if (is-identifier-char? char)
@@ -2353,12 +2353,182 @@
     (| none))
    (| none)))
 
- notebook-app (&
-  create (\ (book)
-   (& book book focus (| at 0) eval (eval-book book (| empty))
-      size (& width 0. height 0.)))
-  apply (\ (book action) action)
-  handle (\ (state event) (:
+ # "Incremental evaluation with per-cell status.
+    Each cache entry is now (& code String status Status evald Evald) where
+    Status is (| outdated) | (| running) | (| done). Code cells are evaluated
+    inline in document order, with each run bounded by `run-fuel`."
+ empty-evald (& name (| none) errors ([]) result (| empty))
+
+ # "The flat array of code-cell entries in document order."
+ cache-entries (\ (cache) (list->array (flatten-cache cache)))
+
+ # "Rebuild a cache tree, applying (f document-index entry) to each entry."
+ map-entries-indexed (\ (cache f)
+  (.node (rec-2 cache 0 (\ (go node i)
+   (% node
+    (chapter children) (:
+     acc
+      (fold (array->iter children) (& i i nodes (| empty))
+       (\ (st child) (:
+        r (go child (.i st))
+        (& i (.i r) nodes (| more (& item (.node r) rest (.nodes st)))))))
+     (& i (.i acc) node (| chapter (list->array (list-reverse (.nodes acc))))))
+    (entry e) (& i (+ i 1) node (| entry (f i e)))
+    _ (& i i node node))))))
+
+ update-code-entry (\ (cache k f)
+  (map-entries-indexed cache (\ (i e) (if (= i k) (f e) e))))
+
+ first-outdated-index (\ (cache) (:
+  entries (cache-entries cache)
+  n (array-length entries)
+  (rec 0 (\ (rec i)
+   (if (>= i n)
+    (| none)
+    (if (= (@variant (.status (array-get entries i))) "outdated")
+     (| some i)
+     (rec (+ i 1))))))))
+
+ # "Fold the env forward across the (done) code cells before index k."
+ env-before (\ (cache k) (:
+  entries (cache-entries cache)
+  (rec-2 0 base-env (\ (rec i env)
+   (if (>= i k)
+    env
+    (rec (+ i 1) (extend-env env (.evald (array-get entries i)))))))))
+
+ # "Build a cache tree mirroring `book`, reusing unchanged done entries from
+    `old-cache` up to the first divergence; the diverging code cell and every
+    code cell after it are marked outdated (their old value kept for display)."
+ rebuild-cache (\ (book old-cache) (:
+  old-entries (cache-entries old-cache)
+  old-count (array-length old-entries)
+  (.node (rec-2 book (& i 0 diverged false) (\ (go node acc)
+   (% node
+    (chapter chapter) (:
+     folded
+      (fold (array->iter (.parts chapter)) (& acc acc nodes (| empty))
+       (\ (st part) (:
+        r (go part (.acc st))
+        (&
+         acc (& i (.i r) diverged (.diverged r))
+         nodes (| more (& item (.node r) rest (.nodes st)))))))
+     (&
+      i (.i (.acc folded))
+      diverged (.diverged (.acc folded))
+      node (| chapter (list->array (list-reverse (.nodes folded))))))
+    (code source) (:
+     idx (.i acc)
+     old (if (< idx old-count) (| some (array-get old-entries idx)) (| none))
+     reusable
+      (% old
+       (some e)
+        (and-3
+         (not (.diverged acc))
+         (= (.code e) source)
+         (= (@variant (.status e)) "done"))
+       _ false)
+     entry
+      (if reusable
+       (% old (some e) e _ (crash "unreachable"))
+       (&
+        code source
+        status (| outdated)
+        evald
+         (% old
+          (some e) (if (= (.code e) source) (.evald e) empty-evald)
+          _ empty-evald)))
+     (&
+      i (+ idx 1)
+      diverged (or (.diverged acc) (not reusable))
+      node (| entry entry)))
+    _ (& i (.i acc) diverged (.diverged acc) node (| skip))))))))
+
+ set-running (\ (st r)
+  (& book (.book st) focus (.focus st) size (.size st) eval (.eval st) running r))
+ set-eval (\ (st e)
+  (& book (.book st) focus (.focus st) size (.size st) eval e running (.running st)))
+ set-size (\ (st s)
+  (& book (.book st) focus (.focus st) size s eval (.eval st) running (.running st)))
+
+ # "Compile a code cell against `env`. Parse+analyze+compile run synchronously
+    on the main thread; the result is either (| run (& name errors thunk)) with a
+    0-arg thunk to run inline, or (| no-run (& name errors result)) for empty
+    cells and parse/analyze failures that need no task."
+ compile-cell-analyzed (\ (name-opt ast env)
+  (% (@sandbox compile-fuel (\ () (analyze ast)))
+   (crashed e) (| no-run (& name name-opt errors ([] e) result (| empty)))
+   out-of-fuel (| no-run (& name name-opt errors ([] "timeout") result (| empty)))
+   (returned analyzed) (:
+    errs (iter->array (collect-errors analyzed (names-of-env env)))
+    thunk (compile analyzed (| empty) env)
+    (| run (& name name-opt errors errs thunk thunk)))))
+ compile-cell (\ (source env)
+  (% (@sandbox compile-fuel (\ () (parse-code-block source)))
+   (crashed e) (| no-run (& name (| none) errors ([] e) result (| empty)))
+   out-of-fuel (| no-run (& name (| none) errors ([] "timeout") result (| empty)))
+   (returned block)
+    (% block
+     empty (| no-run (& name (| none) errors ([]) result (| empty)))
+     (expr ast) (compile-cell-analyzed (| none) ast env)
+     (bind b) (compile-cell-analyzed (| some (.name b)) (.expr b) env))))
+
+ # "Map a sandboxed run result into a cell result."
+ map-task-result (\ (r)
+  (% r
+   (returned v) (| ok v)
+   (crashed e) (| error e)
+   out-of-fuel (| timeout)
+   _ (| error "task failed")))
+
+ # "From code cell k with env-before-k, evaluate cells inline in document order.
+    Each runnable cell is sandboxed with `run-fuel`. When past the last cell,
+    stop."
+ start-eval-from (\ (make-app st0 k0 env0)
+  (rec-3 st0 k0 env0 (\ (self st k env) (:
+   entries (cache-entries (.eval st))
+   n (array-length entries)
+   (if (>= k n)
+    (| app (make-app (set-running st (| none))))
+    (:
+     entry (array-get entries k)
+     compiled (compile-cell (.code entry) env)
+     (% compiled
+      (no-run r) (:
+       new-eval
+        (update-code-entry (.eval st) k
+         (\ (e) (& code (.code e) status (| done) evald r)))
+       (self (set-eval st new-eval) (+ k 1) (extend-env env r)))
+      (run info) (:
+       evald
+        (&
+         name (.name info)
+         errors (.errors info)
+         result (map-task-result (@sandbox run-fuel (.thunk info))))
+       new-eval
+        (update-code-entry (.eval st) k
+         (\ (e) (& code (.code e) status (| done) evald evald)))
+       (self
+        (set-eval st new-eval)
+        (+ k 1)
+        (extend-env env evald))))))))))
+
+ # "If nothing is running, evaluate from the first outdated cell."
+ continue-eval (\ (make-app st)
+  (% (.running st)
+   (some r) (| app (make-app st))
+   none (:
+    first (first-outdated-index (.eval st))
+    (% first
+     (some k) (start-eval-from make-app st k (env-before (.eval st) k))
+     none (| app (make-app st))))))
+
+ make-notebook-app (\ (book)
+  (rec
+   (& book book focus (| at 0) eval (rebuild-cache book (| empty))
+      size (& width 0. height 0.) running (| none))
+   (\ (make-app state) (&
+  handle (\ (event) (:
    enter-focus (\ (node)
     (% node
      new (| text)
@@ -2380,21 +2550,37 @@
      _ (crash "what's the focus for entering this node?")
      ))
    (% event
-    (new-state s) (& state state action (| none))
-    (resize new-size)
-     (& state (&
-       book (.book state)
-       focus (.focus state)
-       eval (.eval state)
-       size new-size)
-      action (| none))
+    (task-finished info) (:
+     handle (.handle info)
+     (% (.running state)
+      (some r)
+       (if (= (.handle r) handle)
+        (:
+         k (.index r)
+         entry (array-get (cache-entries (.eval state)) k)
+         mapped (map-task-result (.result info))
+         new-evald
+          (&
+           name (.name (.evald entry))
+           errors (.errors (.evald entry))
+           result mapped)
+         new-eval
+          (update-code-entry (.eval state) k
+           (\ (e) (& code (.code e) status (| done) evald new-evald)))
+         new-env (extend-env (.env r) new-evald)
+         (start-eval-from make-app
+          (set-running (set-eval state new-eval) (| none)) (+ k 1) new-env))
+        (| app (make-app state)))
+      none (| app (make-app state))))
+    (window-resized new-size)
+     (continue-eval make-app (set-size state new-size))
     _ (:
      result
       (rec-2 (.book state) (.focus state) (\ (handle node focus)
        (% node
         new
          (% event
-          (pressed-key key)
+          (key-pressed key)
           (cond
            (key-escape? key) (& node node focus (| yield))
            (key-enter? key) (:
@@ -2420,7 +2606,7 @@
            else (& node node focus (| here focus)))
           _ (& node node focus (| here focus)))
         (text string) (:
-         is-escape (% event (pressed-key key) (key-escape? key) _ false)
+         is-escape (% event (key-pressed key) (key-escape? key) _ false)
          (if is-escape
           (& node (| text string) focus (| yield))
           (: edited
@@ -2433,7 +2619,7 @@
          (% focus
           at-title
            (% event
-            (pressed-key key)
+            (key-pressed key)
              (cond
               (key-escape? key) (& node node focus (| yield))
               (key-down? key)
@@ -2459,7 +2645,7 @@
             )
           (at i)
            (% event
-            (pressed-key key)
+            (key-pressed key)
              (cond
               (key-escape? key) (& node node focus (| yield))
               (key-up? key)
@@ -2587,29 +2773,29 @@
           _ (crash "bad chapter focus")))
         (code string)
          (cond
-          (% event (pressed-key key) (key-escape? key) _ false) (:
+          (% event (key-pressed key) (key-escape? key) _ false) (:
            # "Escape exits the current node."
            (& node (| code string) focus (| yield)))
-          (% event (char c) (= c "(") _ false) (:
+          (% event (char-entered c) (= c "(") _ false) (:
            # "Typing '(' auto-inserts a matching ')'. I do that by replaying
               events for '(', ')', and a left-arrow press."
            state1
-            (handle-text-edit-with-cursor string 100000. focus (| char "("))
+            (handle-text-edit-with-cursor string 100000. focus (| char-entered "("))
            state2
             (handle-text-edit-with-cursor
              (.string state1)
              100000.
              (.cursor state1)
-             (| char ")"))
+             (| char-entered ")"))
            state3
             (handle-text-edit-with-cursor
              (.string state2)
              100000.
              (.cursor state2)
-             (| pressed-key
+             (| key-pressed
               (& keycode 263 control false shift false alt false)))
            (& node (| code (.string state3)) focus (| here (.cursor state3))))
-          (if (% event (pressed-key k) (key-backspace? k) _ false)
+          (if (% event (key-pressed k) (key-backspace? k) _ false)
            (: active (.active focus)
             (if
              (and-3
@@ -2629,7 +2815,7 @@
              (.string state1)
              100000.
              (.cursor state1)
-             (| pressed-key
+             (| key-pressed
               (& keycode 261 control false shift false alt false)))
            (& node (| code (.string state2)) focus (| here (.cursor state2))))
           else (:
@@ -2638,18 +2824,34 @@
            (& node (| code (.string edited)) focus (| here (.cursor edited)))))
         _ (crash "handle node type")
         )))
-      (&
-       state (&
-        book (.node result)
-        focus
-         (% (.focus result)
-          (here f) f
-          yield (enter-focus (.node result))
-          (eject e) (| at (.index e)))
-        eval (eval-book (.node result) (.eval state))
-        size (.size state))
-       action (| some (.node result)))))))
-  render (\ (state) (:
+      (:
+       new-book (.node result)
+       new-focus
+        (% (.focus result)
+         (here f) f
+         yield (enter-focus (.node result))
+         (eject e) (| at (.index e)))
+       new-cache (rebuild-cache new-book (.eval state))
+       st1
+        (&
+         book new-book focus new-focus size (.size state)
+         eval new-cache running (.running state))
+       c (first-outdated-index new-cache)
+       (% (.running state)
+        (some r)
+         (% c
+          (some ci)
+           (if (<= ci (.index r))
+            (start-eval-from make-app (set-running st1 (| none)) ci
+             (env-before new-cache ci))
+            (| app (make-app st1)))
+          none (| app (make-app st1)))
+        none
+         (% c
+          (some ci)
+           (start-eval-from make-app st1 ci (env-before new-cache ci))
+          none (| app (make-app st1)))))))))
+  render (\ () (:
    size (.size state)
    chapter-and-focus
     (rec-2 (.book state) (.focus state) (\ (rec node focus)
@@ -2761,18 +2963,9 @@
            (in args)
             (if (= (.index args) index) (| inside (.inner args)) (| outside))
            _ (| outside))))))))))
-   (.draw rendered))))
+   (.draw rendered)))))))
 
- overwrite-app (&
-  create (\ (state) (&))
-  apply (\ (state action)
-   (| chapter (&
-    title "Orchard"
-    parts ([] (| text "Hello, world!") (| text "Example text.")))))
-  handle (\ (state event) (& state state action (| some (&))))
-  render (\ (state) (| nothing)))
-
- notebook-app
+ make-notebook-app
 )
 
 ===

@@ -1,11 +1,12 @@
 // The Heap
 //
-// This is a heap for immutable objects. When you allocate an object, you have to provide data to initialize
-// the memory with. Afterwards, this memory can no longer be changed.
-// While the heap has no understanding of what kinds of objects it stores (structs, enums, lambdas, etc.),
-// it does know how objects are connected. It knows what parts of the memory are pointers to other
-// objects and what parts are literal values. Using this information, the heap can deduplicate objects and
-// do garbage collection.
+// This is a heap for immutable objects. When you allocate an object, you have
+// to provide data to initialize the memory with. Afterwards, this memory can no
+// longer be changed. While the heap has no understanding of what kinds of
+// objects it stores (structs, enums, lambdas, etc.), it does know how objects
+// are connected. It knows what parts of the memory are pointers to other
+// objects and what parts are literal values. Using this information, the heap
+// can deduplicate objects and do garbage collection.
 //
 // The heap supports two kinds of objects:
 // - Leaf objects contain literal words.
@@ -429,6 +430,32 @@ pub fn copy_to_other_heap(from: *Heap, ally: Ally, to: *Heap, object: Obj) !Obj 
     return mapping.get(object) orelse unreachable;
 }
 
+// Bulk-copies the whole contents of `src` into `dest` and returns the new
+// address of `obj`.
+pub fn copy_whole_heap(dest: *Heap, src: *const Heap, obj: Obj) !Obj {
+    if (dest.used + src.used > dest.memory.len) return error.OutOfMemory;
+    @memcpy(dest.memory[dest.used..][0..src.used], src.memory[0..src.used]);
+    dest.used += src.used;
+
+    const src_base = @intFromPtr(&src.memory[0]);
+    const dest_base = @intFromPtr(&dest.memory[dest.used]);
+    var cursor = dest.used - src.used;
+    while (cursor < dest.used) {
+        const header: Header = @bitCast(dest.memory[cursor]);
+        if (header.is_inner == 1) {
+            cursor += 1;
+            for (0..header.num_words) |_| {
+                dest.memory[cursor] += dest_base - src_base;
+                cursor += 1;
+            }
+        } else {
+            cursor += 1 + header.num_words;
+        }
+    }
+
+    return .{ .address = obj.address - src_base + dest_base };
+}
+
 pub fn new_symbol(heap: *Heap, value: []const u8) !Obj {
     var b = try heap.build_leaf();
     const num_words = (value.len + 7) / 8;
@@ -466,7 +493,7 @@ pub fn dump(heap: Heap) void {
         i += 1 + header.num_words;
     }
 }
-pub fn dump_stats(heap: Heap) void {
+pub fn dump_size(heap: Heap) void {
     const num_words = heap.used;
     std.debug.print("{} words", .{num_words});
 
@@ -479,10 +506,13 @@ pub fn dump_stats(heap: Heap) void {
             break;
         }
     } else std.debug.print("a lot of memory", .{});
+}
+pub fn dump_stats(heap: Heap) void {
+    heap.dump_size();
 
     var num_objects: usize = 0;
     var i: usize = 0;
-    while (i < num_words) {
+    while (i < heap.used) {
         num_objects += 1;
         const header: Header = @bitCast(heap.memory[i]);
         i += 1 + header.num_words;

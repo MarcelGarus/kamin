@@ -167,11 +167,17 @@ const Stack = struct {
 };
 
 pub fn init(heap: *Heap, ally: Ally) !Self {
+    return init_sized(heap, ally, 200000000, 200000000);
+}
+// Like `init`, but with explicit data/call stack sizes (in words). Worker
+// threads use small stacks so that spawning a VM per task is affordable; the
+// default `init` keeps the large sizes the main VM relies on.
+pub fn init_sized(heap: *Heap, ally: Ally, data_stack_words: usize, call_stack_words: usize) !Self {
     return .{
         .ally = ally,
         .heap = heap,
-        .data_stack = try Stack.init(ally, 10000000),
-        .call_stack = try Stack.init(ally, 10000000),
+        .data_stack = try Stack.init(ally, data_stack_words),
+        .call_stack = try Stack.init(ally, call_stack_words),
         .sandbox_stack = try Stack.init(ally, 1000),
         .jit_cache = ObjMap([]const u8).empty,
         .run_jitted_wrapper = wrapper: {

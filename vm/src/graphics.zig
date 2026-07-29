@@ -133,7 +133,9 @@ event_queue: ArrayList(Event),
 
 pub const Event = union(enum) {
     entered_char: struct { codepoint: usize },
-    pressed_key: struct { keycode: usize, control: bool, alt: bool, shift: bool },
+    char_entered: CharEntered,
+    key_pressed: KeyPressed,
+
 };
 
 fn glfwErrorCallback(error_code: c_int, description: [*c]const u8) callconv(.c) void {
@@ -187,7 +189,7 @@ pub fn init(ally: Ally) !*Graphics {
 fn charCallback(window: ?*gl.GLFWwindow, codepoint: c_uint) callconv(.c) void {
     const graphics: *Graphics = @ptrCast(@alignCast(gl.glfwGetWindowUserPointer(window)));
     graphics.event_queue.append(graphics.ally, .{
-        .entered_char = .{ .codepoint = codepoint },
+        .char_entered = .{ .codepoint = codepoint },
     }) catch @panic("couldn't append event");
 }
 
@@ -240,6 +242,11 @@ pub fn get_time(self: Graphics) f32 {
     const double_t = gl.glfwGetTime();
     const t = @as(f32, @floatCast(double_t));
     return t;
+}
+
+// Wakes up the event loop.
+pub fn wake() void {
+    gl.glfwPostEmptyEvent();
 }
 
 pub fn poll_events(self: Graphics) void {
@@ -298,14 +305,8 @@ fn render_single(vg: nvg, instruction: DrawingInstruction) error{OutOfMemory}!vo
             vg.beginPath();
             for (args.path) |segment| {
                 switch (segment) {
-                    .move_to => |pos| vg.moveTo(
-                        @floatCast(pos.x),
-                        @floatCast(pos.y),
-                    ),
-                    .line_to => |pos| vg.lineTo(
-                        @floatCast(pos.x),
-                        @floatCast(pos.y),
-                    ),
+                    .move_to => |pos| vg.moveTo(@floatCast(pos.x), @floatCast(pos.y)),
+                    .line_to => |pos| vg.lineTo(@floatCast(pos.x), @floatCast(pos.y)),
                 }
             }
             vg.fillColor(nvg.rgb(args.color.r, args.color.g, args.color.b));
@@ -319,116 +320,6 @@ fn render_single(vg: nvg, instruction: DrawingInstruction) error{OutOfMemory}!vo
         },
     }
 }
-
-fn drawEyes(vg: nvg, x: f32, y: f32, w: f32, h: f32, mx: f32, my: f32, t: f32) void {
-    const ex = w * 0.23;
-    const ey = h * 0.5;
-    const lx = x + ex;
-    const ly = y + ey;
-    const rx = x + w - ex;
-    const ry = y + ey;
-    const br = (if (ex < ey) ex else ey) * 0.5;
-    const blink = 1 - std.math.pow(f32, @sin(t * 0.5), 200) * 0.8;
-
-    var bg = vg.linearGradient(x, y + h * 0.5, x + w * 0.1, y + h, nvg.rgba(0, 0, 0, 32), nvg.rgba(0, 0, 0, 16));
-    vg.beginPath();
-    vg.ellipse(lx + 3.0, ly + 16.0, ex, ey);
-    vg.ellipse(rx + 3.0, ry + 16.0, ex, ey);
-    vg.fillPaint(bg);
-    vg.fill();
-
-    bg = vg.linearGradient(x, y + h * 0.25, x + w * 0.1, y + h, nvg.rgba(220, 220, 220, 255), nvg.rgba(128, 128, 128, 255));
-    vg.beginPath();
-    vg.ellipse(lx, ly, ex, ey);
-    vg.ellipse(rx, ry, ex, ey);
-    vg.fillPaint(bg);
-    vg.fill();
-
-    var dx = (mx - rx) / (ex * 10);
-    var dy = (my - ry) / (ey * 10);
-    var d = @sqrt(dx * dx + dy * dy);
-    if (d > 1.0) {
-        dx /= d;
-        dy /= d;
-    }
-    dx *= ex * 0.4;
-    dy *= ey * 0.5;
-    vg.beginPath();
-    vg.ellipse(lx + dx, ly + dy + ey * 0.25 * (1 - blink), br, br * blink);
-    vg.fillColor(nvg.rgba(32, 32, 32, 255));
-    vg.fill();
-
-    dx = (mx - rx) / (ex * 10);
-    dy = (my - ry) / (ey * 10);
-    d = @sqrt(dx * dx + dy * dy);
-    if (d > 1.0) {
-        dx /= d;
-        dy /= d;
-    }
-    dx *= ex * 0.4;
-    dy *= ey * 0.5;
-    vg.beginPath();
-    vg.ellipse(rx + dx, ry + dy + ey * 0.25 * (1 - blink), br, br * blink);
-    vg.fillColor(nvg.rgba(32, 32, 32, 255));
-    vg.fill();
-
-    var gloss = vg.radialGradient(lx - ex * 0.25, ly - ey * 0.5, ex * 0.1, ex * 0.75, nvg.rgba(255, 255, 255, 128), nvg.rgba(255, 255, 255, 0));
-    vg.beginPath();
-    vg.ellipse(lx, ly, ex, ey);
-    vg.fillPaint(gloss);
-    vg.fill();
-
-    gloss = vg.radialGradient(rx - ex * 0.25, ry - ey * 0.5, ex * 0.1, ex * 0.75, nvg.rgba(255, 255, 255, 128), nvg.rgba(255, 255, 255, 0));
-    vg.beginPath();
-    vg.ellipse(rx, ry, ex, ey);
-    vg.fillPaint(gloss);
-    vg.fill();
-}
-
-fn drawGraph(vg: nvg, x: f32, y: f32, w: f32, h: f32, t: f32) void {
-    const dx = w / 5.0;
-
-    const samples = [_]f32{
-        (1 + @sin(t * 1.2345 + @cos(t * 0.33457) * 0.44)) * 0.5,
-        (1 + @sin(t * 0.68363 + @cos(t * 1.3) * 1.55)) * 0.5,
-        (1 + @sin(t * 1.1642 + @cos(t * 0.33457) * 1.24)) * 0.5,
-        (1 + @sin(t * 0.56345 + @cos(t * 1.63) * 0.14)) * 0.5,
-        (1 + @sin(t * 1.6245 + @cos(t * 0.254) * 0.3)) * 0.5,
-        (1 + @sin(t * 0.345 + @cos(t * 0.03) * 0.6)) * 0.5,
-    };
-
-    var sx: [6]f32 = undefined;
-    var sy: [6]f32 = undefined;
-    for (samples, 0..) |sample, i| {
-        sx[i] = x + @as(f32, @floatFromInt(i)) * dx;
-        sy[i] = y + h * sample * 0.8;
-    }
-
-    // Graph background
-    var bg = vg.linearGradient(x, y, x, y + h, nvg.rgba(0, 160, 192, 0), nvg.rgba(0, 160, 192, 64));
-    vg.beginPath();
-    vg.moveTo(sx[0], sy[0]);
-    var i: u32 = 1;
-    while (i < 6) : (i += 1)
-        vg.bezierTo(sx[i - 1] + dx * 0.5, sy[i - 1], sx[i] - dx * 0.5, sy[i], sx[i], sy[i]);
-    vg.lineTo(x + w, y + h);
-    vg.lineTo(x, y + h);
-    vg.fillPaint(bg);
-    vg.fill();
-
-    // Graph line
-    vg.beginPath();
-    vg.moveTo(sx[0], sy[0] + 2);
-    i = 1;
-    while (i < 6) : (i += 1)
-        vg.bezierTo(sx[i - 1] + dx * 0.5, sy[i - 1] + 2, sx[i] - dx * 0.5, sy[i] + 2, sx[i], sy[i] + 2);
-    vg.strokeColor(nvg.rgba(0, 0, 0, 32));
-    vg.strokeWidth(3.0);
-    vg.stroke();
-
-    vg.beginPath();
-    vg.moveTo(sx[0], sy[0]);
-
     i = 1;
     while (i < 6) : (i += 1)
         vg.bezierTo(sx[i - 1] + dx * 0.5, sy[i - 1], sx[i] - dx * 0.5, sy[i], sx[i], sy[i]);
