@@ -15,18 +15,29 @@ const Graphics = @This();
 
 pub const Size = struct { width: f64, height: f64 };
 pub const Position = struct { x: f64, y: f64 };
+pub const TransformationMatrix = struct { a: f64, b: f64, c: f64, d: f64, e: f64, f: f64 };
 pub const Color = struct { r: u8, g: u8, b: u8 };
 pub const Path = []const PathSegment;
 pub const PathSegment = union(enum) { move_to: Position, line_to: Position };
 pub const DrawingInstruction = union(enum) {
     fill_path: struct { path: Path, color: Color },
-    translate: struct { by: Position, children: []const DrawingInstruction },
+    transform: struct { by: TransformationMatrix, children: []const DrawingInstruction },
 };
 
 pub fn parse_position(value: Value) !Position {
     return .{
         .x = value.field("x").float(),
         .y = value.field("y").float(),
+    };
+}
+pub fn parse_transformation_matrix(value: Value) TransformationMatrix {
+    return .{
+        .a = value.field("a").float(),
+        .b = value.field("b").float(),
+        .c = value.field("c").float(),
+        .d = value.field("d").float(),
+        .e = value.field("e").float(),
+        .f = value.field("f").float(),
     };
 }
 pub fn parse_color(value: Value) !Color {
@@ -79,11 +90,11 @@ pub fn parse_drawing_instructions_rec(
         }
         return;
     }
-    if (std.mem.eql(u8, variant, "translate")) {
-        const by = try parse_position(payload.field("by"));
+    if (std.mem.eql(u8, variant, "transform")) {
+        const by = parse_transformation_matrix(payload.field("by"));
         var children = ArrayList(DrawingInstruction).empty;
         try parse_drawing_instructions_rec(ally, &children, payload.field("what"));
-        try instructions.append(ally, .{ .translate = .{
+        try instructions.append(ally, .{ .transform = .{
             .by = by,
             .children = children.items,
         } });
@@ -116,10 +127,12 @@ pub fn dump_drawing_instructions_indented(instructions: []const DrawingInstructi
                 }
                 std.debug.print("\n", .{});
             },
-            .translate => |translate| {
-                std.debug.print("translate ({d}|{d})", .{ translate.by.x, translate.by.y });
-                std.debug.print("\n", .{});
-                try dump_drawing_instructions_indented(translate.children, indentation + 1);
+            .transform => |transform| {
+                const by = transform.by;
+                std.debug.print("transform ({d} {d} {d} {d} {d} {d})\n", .{
+                    by.a, by.b, by.c, by.d, by.e, by.f,
+                });
+                try dump_drawing_instructions_indented(transform.children, indentation + 1);
             },
         }
     }
@@ -132,10 +145,11 @@ vg: nvg,
 event_queue: ArrayList(Event),
 
 pub const Event = union(enum) {
-    entered_char: struct { codepoint: usize },
     char_entered: CharEntered,
     key_pressed: KeyPressed,
 
+    pub const CharEntered = struct { codepoint: usize };
+    pub const KeyPressed = struct { keycode: usize, control: bool, alt: bool, shift: bool };
 };
 
 fn glfwErrorCallback(error_code: c_int, description: [*c]const u8) callconv(.c) void {
@@ -198,7 +212,7 @@ fn keyCallback(window: ?*gl.GLFWwindow, key: c_int, scancode: c_int, action: c_i
     const graphics: *Graphics = @ptrCast(@alignCast(gl.glfwGetWindowUserPointer(window)));
     if (action == gl.GLFW_PRESS or action == gl.GLFW_REPEAT) {
         graphics.event_queue.append(graphics.ally, .{
-            .pressed_key = .{
+            .key_pressed = .{
                 .keycode = @intCast(key),
                 .control = mods & gl.GLFW_MOD_CONTROL != 0,
                 .alt = mods & gl.GLFW_MOD_ALT != 0,
@@ -312,43 +326,18 @@ fn render_single(vg: nvg, instruction: DrawingInstruction) error{OutOfMemory}!vo
             vg.fillColor(nvg.rgb(args.color.r, args.color.g, args.color.b));
             vg.fill();
         },
-        .translate => |t| {
+        .transform => |t| {
             vg.save();
-            vg.translate(@floatCast(t.by.x), @floatCast(t.by.y));
+            vg.transform(
+                @floatCast(t.by.a),
+                @floatCast(t.by.b),
+                @floatCast(t.by.c),
+                @floatCast(t.by.d),
+                @floatCast(t.by.e),
+                @floatCast(t.by.f),
+            );
             try render_all(vg, t.children);
             vg.restore();
         },
     }
-}
-    i = 1;
-    while (i < 6) : (i += 1)
-        vg.bezierTo(sx[i - 1] + dx * 0.5, sy[i - 1], sx[i] - dx * 0.5, sy[i], sx[i], sy[i]);
-    vg.strokeColor(nvg.rgba(0, 160, 192, 255));
-    vg.strokeWidth(3.0);
-    vg.stroke();
-
-    // Graph sample pos
-    i = 0;
-    while (i < 6) : (i += 1) {
-        bg = vg.radialGradient(sx[i], sy[i] + 2, 3.0, 8.0, nvg.rgba(0, 0, 0, 32), nvg.rgba(0, 0, 0, 0));
-        vg.beginPath();
-        vg.rect(sx[i] - 10, sy[i] - 10 + 2, 20, 20);
-        vg.fillPaint(bg);
-        vg.fill();
-    }
-
-    vg.beginPath();
-    i = 0;
-    while (i < 6) : (i += 1)
-        vg.circle(sx[i], sy[i], 4.0);
-    vg.fillColor(nvg.rgba(0, 160, 192, 255));
-    vg.fill();
-    vg.beginPath();
-    i = 0;
-    while (i < 6) : (i += 1)
-        vg.circle(sx[i], sy[i], 2.0);
-    vg.fillColor(nvg.rgba(220, 220, 220, 255));
-    vg.fill();
-
-    vg.strokeWidth(1.0);
 }

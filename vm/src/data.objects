@@ -1269,10 +1269,10 @@ avt (ju avs)
 avu "Rendering works using drawing instructions."
 avv (jy avu)
 avw (avt avv)
-avx "DrawingInstruction = (|\n  nothing\n  fill-path (& path Path color Color)\n  translate (& by Point what DrawingInstruction)\n  all ([] DrawingInstruction))"
+avx "DrawingInstruction = (|\n  nothing\n  fill-path (& path Path color Color)\n  translate (& by Point what DrawingInstruction)\n  transform (& by TransformationMatrix what DrawingInstruction)\n  all ([] DrawingInstruction))"
 avy (jy avx)
 avz (avt avy)
-awa "Point = (& x Float y Float)"
+awa "Point = (& x Float y Float)\nTransformationMatrix = (& a Float b Float c Float d Float e Float f Float)"
 awb (jy awa)
 awc (avt awb)
 awd "Color = (& r Int g Int b Int)"
@@ -1314,7 +1314,7 @@ axm (jw axl)
 axn "(point 2. 3.)"
 axo (jy axn)
 axp (jw axo)
-axq "origin (point 0. 0.)"
+axq "transform-translate (\\ (x y) (& a 1. b 0. c 0. d 1. e x f y))"
 axr (jy axq)
 axs (jw axr)
 axt (awv axm axp axs)
@@ -1529,7 +1529,7 @@ bft (hs bfs)
 bfu "Padding accepts either a float (for uniform padding on all sides) or a struct (& left right top bottom) of floats."
 bfv (hw bfu)
 bfw (bft bfv)
-bfx "padding (\\ (padding child) (:\n  left (if (float? padding) padding (.left padding))\n  right (if (float? padding) padding (.right padding))\n  top (if (float? padding) padding (.top padding))\n  bottom (if (float? padding) padding (.bottom padding))\n  (&\n    draw (| translate (& by (& x left y top) what (.draw child)))\n    width (+ (.width child) (+ left right))\n    height (+ (.height child) (+ top bottom)))))"
+bfx "padding (\\ (padding child) (:\n  left (if (float? padding) padding (.left padding))\n  right (if (float? padding) padding (.right padding))\n  top (if (float? padding) padding (.top padding))\n  bottom (if (float? padding) padding (.bottom padding))\n  (&\n    draw (| transform (& by (transform-translate left top) what (.draw child)))\n    width (+ (.width child) (+ left right))\n    height (+ (.height child) (+ top bottom)))))"
 bfy (hw bfx)
 bfz (hu bfy)
 bga "(preview\n  (colored (color \"#000000\") (padding 2. (colored (color \"#ffcc00\") (empty-box 10. 10.)))))"
@@ -1549,7 +1549,7 @@ bgn "row"
 bgo (hw bgn)
 bgp "array"
 bgq (bgp)
-bgr "padded-row (\\ (padding children) (:\n  res\n    (rec-2 (array->list children) 0. (\\ (rec children x)\n      (% children\n        empty (& draw (| empty) width 0. height 0.)\n        (more m) (:\n          child (.item m)\n          rest (rec (.rest m) (+ x (.width child)))\n          (&\n            draw (| more (&\n              item (| translate (& by (& x x y 0.) what (.draw child)))\n              rest (.draw rest)))\n            width (+ (.width child) (+ padding (.width rest)))\n            height (max (.height child) (.height rest)))))))\n  (&\n    draw (| all (list->array (.draw res)))\n    width (- (.width res) padding)\n    height (.height res))))"
+bgr "padded-row (\\ (padding children) (:\n  res\n    (rec-2 (array->list children) 0. (\\ (rec children x)\n      (% children\n        empty (& draw (| empty) width 0. height 0.)\n        (more m) (:\n          child (.item m)\n          rest (rec (.rest m) (+ x (.width child)))\n          (&\n            draw (| more (&\n              item (| transform (& by (transform-translate x 0.) what (.draw child)))\n              rest (.draw rest)))\n            width (+ (.width child) (+ padding (.width rest)))\n            height (max (.height child) (.height rest)))))))\n  (&\n    draw (| all (list->array (.draw res)))\n    width (- (.width res) padding)\n    height (.height res))))"
 bgs (hw bgr)
 bgt (hu bgs)
 bgu "row (\\ (children) (padded-row 0. children))"

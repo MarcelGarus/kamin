@@ -99,7 +99,7 @@ pub fn main(init: std.process.Init) !void {
         break :step Value.from(try vm.garbage_collect(start_of_heap, olive_self_hosted_2.field("compile_pear").obj));
     };
 
-    std.debug.print(io, "Running notebook.\n", .{});
+    std.debug.print("Running notebook.\n", .{});
     const compiled = try compile_pear.call(&vm, &.{try Value.new_string(&heap, pear_code)});
     const make_app = try compiled.call(&vm, &.{});
     const book = Value.from(try object_loader.load(

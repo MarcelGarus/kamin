@@ -454,10 +454,11 @@
   <drawing-instruction> =
    | nothing
    | fill-path (& path <path> color <color>)
-   | translate (& by <point> what <drawing-instruction>)
+   | transform (& by <transformation-matrix> what <drawing-instruction>)
    | all ([] <drawing-instruction>)
 
   <point> = (& x y)
+  <transformation-matrix> = (& a b c d e f)
   <color> = (& r <int> g <int> b <int>)
 
   <path> = ([] <path-segment>)
@@ -491,6 +492,8 @@
  # "All coordinates and sizes are floats. Colors and offsets stay ints."
  point (\ (x y) (& x x y y))
  fpoint (\ (x y) (& x (int->float x) y (int->float y)))
+
+ transform-translate (\ (x y) (& a 1. b 0. c 0. d 1. e x f y))
 
  parse-hex (\ (string)
   (rec-2 0 (array->list (string->bytes string)) (\ (rec value chars)
@@ -531,6 +534,15 @@
  sized-box (\ (width height child)
   (& draw (.draw child) width width height height))
 
+ # "Renders the child at an offset, but still occupies the original position."
+ translate (\ (by child)
+  (&
+    draw
+     (| transform
+      (& by (transform-translate (.x by) (.y by)) what (.draw child)))
+    width (.width child)
+    height (.height child)))
+
  colored (\ (color child)
   (:
    width (.width child)
@@ -554,13 +566,15 @@
  padding (\ (padding child)
   (if (= (@kind padding) (| float))
    (&
-    draw (| translate (& by (& x padding y padding) what (.draw child)))
+    draw
+     (| transform
+      (& by (transform-translate padding padding) what (.draw child)))
     width (f+ (.width child) (f* 2. padding))
     height (f+ (.height child) (f* 2. padding)))
    (&
     draw
-     (| translate (&
-      by (& x (.left padding) y (.top padding))
+     (| transform (&
+      by (transform-translate (.left padding) (.top padding))
       what (.draw child)))
     width (f+ (.width child) (f+ (.left padding) (.right padding)))
     height (f+ (.height child) (f+ (.top padding) (.bottom padding))))))
@@ -576,7 +590,10 @@
       (&
        draw
         (| more (&
-         item (| translate (& by (& x x y 0.) what (.draw child)))
+         item
+          (| transform (&
+           by (transform-translate x 0.)
+           what (.draw child)))
          rest (.draw rest)))
        width (f+ (.width child) (f+ padding (.width rest)))
        height (f-max (.height child) (.height rest)))))))
@@ -597,7 +614,10 @@
       (&
        list
         (| more (&
-         item (| translate (& by (& x 0. y y) what (.draw child)))
+         item
+          (| transform (&
+           by (transform-translate 0. y)
+           what (.draw child)))
          rest (.list rest)))
        width (f-max (.width child) (.width rest))
        height (f+ (.height child) (.height rest)))))))
@@ -631,7 +651,10 @@
        (&
         draws
          (| more (&
-          item (| translate (& by (& x x y y) what (.draw child)))
+          item
+           (| transform (&
+            by (transform-translate x y)
+            what (.draw child)))
           rest (.draws rest)))
         bottom (.bottom rest))))))
    (&
@@ -900,8 +923,8 @@
      (| all
       (iter->array
        (map (list->iter layouted) (\ (glyph)
-        (| translate (&
-         by (& x (.x glyph) y (.y glyph))
+        (| transform (&
+         by (transform-translate (.x glyph) (.y glyph))
          what (draw-glyph (.glyph glyph) color)))))))
     width
      (fold
@@ -1501,8 +1524,8 @@
        (| all
         (iter->array
          (map (list->iter layouted) (\ (glyph)
-          (| translate (&
-           by (& x (.x glyph) y (.y glyph))
+          (| transform (&
+           by (transform-translate (.x glyph) (.y glyph))
            what (draw-glyph (.glyph glyph) color)))))))))
      width
       (fold
@@ -2158,6 +2181,30 @@
    false))
  valid-draw-path? (\ (p)
   (if (= (@kind p) (| array)) (all (array->iter p) valid-path-segment?) false))
+ valid-transformation-matrix? (\ (m)
+  (if (= (@kind m) (| struct))
+   (if (struct-has-field? m "a")
+    (if (struct-has-field? m "b")
+     (if (struct-has-field? m "c")
+      (if (struct-has-field? m "d")
+       (if (struct-has-field? m "e")
+        (if (struct-has-field? m "f")
+         (and
+          (and-3
+           (= (@kind (@field m "a")) (| float))
+           (= (@kind (@field m "b")) (| float))
+           (= (@kind (@field m "c")) (| float)))
+          (and-3
+           (= (@kind (@field m "d")) (| float))
+           (= (@kind (@field m "e")) (| float))
+           (= (@kind (@field m "f")) (| float))))
+         false)
+        false)
+       false)
+      false)
+     false)
+    false)
+   false))
  valid-draw? (\ (d)
   (rec d (\ (recurse d)
    (if (= (@kind d) (| enum))
@@ -2185,6 +2232,17 @@
           (if (struct-has-field? p "what")
            (and
             (valid-draw-position? (@field p "by"))
+            (recurse (@field p "what")))
+           false)
+          false)
+         false))
+      (= v "transform")
+       (: p (@payload d)
+        (if (= (@kind p) (| struct))
+         (if (struct-has-field? p "by")
+          (if (struct-has-field? p "what")
+           (and
+            (valid-transformation-matrix? (@field p "by"))
             (recurse (@field p "what")))
            false)
           false)
@@ -2971,9 +3029,14 @@
 ===
 
 General TODO:
+- make notebook more beautiful (big section titles, better colors)
+- support copy paste
+- support syntax highlighting
+- better incremental notebook
+- better widget/rendering/caching abstraction (eg cache layouts and drawing instructions of subtrees)
+- notebook zooming with ctrl +/-
 - mouse input
 - animation
-- cancelable multithreading (or first-class computations or something like that)
 - add if and cond to the IR?
 - syncing data between devices
 - provide optimize function that is then applied to every Pear function
