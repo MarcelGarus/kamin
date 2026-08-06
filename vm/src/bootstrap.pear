@@ -448,23 +448,21 @@
 
  ##### "The Render System
 
-  When Pear code is asked to render something for the outside world, it
-  communicates using drawing instructions. These are just normal Pear values.
+  When Pear code is asked to render something for the outside world, it returns
+  drawing instructions. These are just normal Pear values.
 
-  <drawing-instruction> =
+  DrawingInstruction =
    | nothing
-   | fill-path (& path <path> color <color>)
-   | transform (& by <transformation-matrix> what <drawing-instruction>)
-   | all ([] <drawing-instruction>)
-
-  <point> = (& x y)
-  <transformation-matrix> = (& a b c d e f)
-  <color> = (& r <int> g <int> b <int>)
-
-  <path> = ([] <path-segment>)
-  <path-segment> =
-   | move-to <point>
-   | line-to <point>
+   | fill-path (& path Path color Color)
+   | transform (& by TransformationMatrix what DrawingInstruction)
+   | all ([] DrawingInstruction)
+  Path = ([] PathSegment)
+  PathSegment =
+   | move-to Point
+   | line-to Point
+  Point = (& x Float y Float)
+  Color = (& r Int g Int b Int)
+  TransformationMatrix = (& a Float b Float c Float d Float e Float f Float)
 
   Initially, I tried to communicate with the outside world using pixel graphics.
   However, I believe that's not the right move as pixels are more difficult to
@@ -483,7 +481,7 @@
   takes and turns into pixels.
 
   Within Pear, rendering functions usually return structs of the form
-  (& draw <drawing-instructions> width <int> height <int>) rather than just raw
+  (& draw DrawingInstruction width Int height Int) rather than just raw
   drawing instructions.
 
   2026-05-10: Added this comment.
@@ -491,9 +489,9 @@
 
  # "All coordinates and sizes are floats. Colors and offsets stay ints."
  point (\ (x y) (& x x y y))
- fpoint (\ (x y) (& x (int->float x) y (int->float y)))
 
  transform-translate (\ (x y) (& a 1. b 0. c 0. d 1. e x f y))
+ transform-scale (\ (factor) (& a factor b 0. c 0. d factor e 0. f 0.))
 
  parse-hex (\ (string)
   (rec-2 0 (array->list (string->bytes string)) (\ (rec value chars)
@@ -542,6 +540,14 @@
       (& by (transform-translate (.x by) (.y by)) what (.draw child)))
     width (.width child)
     height (.height child)))
+
+ scaled (\ (factor child)
+  (&
+   draw
+    (| transform
+     (& by (transform-scale factor) what (.draw child)))
+   width (f* factor (.width child))
+   height (f* factor (.height child))))
 
  colored (\ (color child)
   (:
@@ -684,7 +690,6 @@
       (| more
        (& item (list->array (.result row)) rest (rec rec (.cursor row)))))))
    (list->array (rec rec 0))))
- # "pixel-glyph operates on INT pixel coordinates and emits float paths."
  pixel-glyph (\ (char width string)
   (:
    pixels (parse-pixels width string)
@@ -695,10 +700,10 @@
      (if (= (array-get (array-get pixels y) x) 1)
       (| more (&
        item ([]
-        (| move-to (fpoint x y))
-        (| line-to (fpoint (+ x 1) y))
-        (| line-to (fpoint (+ x 1) (+ y 1)))
-        (| line-to (fpoint x (+ y 1))))
+        (| move-to (point (int->float x) (int->float y)))
+        (| line-to (point (int->float (+ x 1)) (int->float y)))
+        (| line-to (point (int->float (+ x 1)) (int->float (+ y 1))))
+        (| line-to (point (int->float x) (int->float (+ y 1)))))
        rest (rec (+ x 1) y)))
       (rec (+ x 1) y)))))
    (& char char width (int->float width) paths paths)))
@@ -2955,7 +2960,12 @@
        (% focus
         (inside cursor) (editable-text string black cursor (f- width 4.))
         outside (text-wrapped string black (f- width 4.))))
-     (chapter chapter) (padding 2. (text (.title chapter) orchard-color))
+     (chapter chapter)
+      (padding 2.
+       (row ([]
+        (padding (& top 3. bottom 0. right 4. left 0.)
+         (colored black (empty-box 7. 7.)))
+        (text (.title chapter) black))))
      (code string) (:
       evald
        (% cache
@@ -2965,8 +2975,8 @@
       code-element
        (padding 2.
         (% focus
-         (inside cursor) (editable-text string green cursor 100000.)
-         outside (text string green)))
+         (inside cursor) (editable-text string (color "#295829") cursor 100000.)
+         outside (text string (color "#295829"))))
       run-element
        (% (.result evald)
         (ok value)
@@ -3005,25 +3015,432 @@
         (column ([] code-element result-element)))))
      _ (colored red (text "unknown part" white))))
    rendered
-    (column ([]
-     (colored orchard-color
-      (sized-box (.width size) (f+ line-height 4.)
-       (padding 2. (text (.title chapter) white))))
-     (column
-      (iter->array
-       (map-indexed (array->iter (.parts chapter)) (\ (index part)
-        (maybe-render-cursor (% focus (at i) (= i index) _ false)
-         (render-part
-          part
-          (array-get current-caches index)
-          (.width size)
-          (% focus
-           (in args)
-            (if (= (.index args) index) (| inside (.inner args)) (| outside))
-           _ (| outside))))))))))
+    (colored (color "#ffeadd")
+     (sized-box (.width size) (.height size)
+      (column ([]
+       (empty-box 0. 4.)
+       (padding 2. (scaled 1.5 (text (.title chapter) black)))
+       (empty-box 0. 4.)
+       (column
+        (iter->array
+         (map-indexed (array->iter (.parts chapter)) (\ (index part)
+          (maybe-render-cursor (% focus (at i) (= i index) _ false)
+           (render-part
+            part
+            (array-get current-caches index)
+            (.width size)
+            (% focus
+             (in args)
+              (if (= (.index args) index) (| inside (.inner args)) (| outside))
+             _ (| outside))))))))))))
    (.draw rendered)))))))
 
- make-notebook-app
+
+
+
+ _ make-notebook-app
+
+
+
+ _ "Widget framework
+
+  The widget framework functions similar to that of Flutter: You define your UI
+  by nesting very tiny, simple widgets in a declarative way. This widget tree
+  gets converted into an element tree (elements are persistent nodes that can
+  have internal state). On the next frame, you rebuild a widget tree and my
+  framework updates the element tree accordingly.
+
+  Having widget and element trees instead of just composing functions that
+  return drawings allows you to keep internal state in the tree. This can be
+  used for performance (for example, to now re-layout text) and is generally
+  useful for state management.
+
+  A widget defines the behavior of a UI part. It's really just a struct:
+  (&
+   new (\\ (config) ...)
+   render (\\ (state) ...)
+   new-constraints (\\ (state constraints) ...)
+   mouse-clicked (\\ (state where) ...)
+   handle (\\ (state event) ...)
+   ).
+  Sometimes, I talk about abstract widgets (this struct) and concrete widget
+  instances (something like (text "Hi"), which is really just another struct
+  (& config <parameters> widget <abstract text-widget>)).
+
+  Here's what the widget functions do:
+  - new: Takes a configuration and returns a state. The framework calls it to
+    create a new element (& widget ... state ...).
+  - render: Takes a state and renders it to (& size ... draw ...).
+  - new-constraints: Takes a state and constraints and returns a new state.
+  - mouse-clicked: Takes a state and position and returns either:
+    - (| not-handled) to indicate that an external element should handle the
+      click;
+    - (| handled state) to indicate that the click was handled internally;
+    - (| message ...) to indicate that the click was handled and the message
+      should be passed up the tree to some element which handles it
+      TODO: how do messages bubble up the tree?
+ "
+
+ _ "Constraints"
+
+ tight-constraints (\ (size)
+  (&
+   width (| bounded (& min (.width size) max (.width size)))
+   height (| bounded (& min (.height size) max (.height size)))))
+ loosen-min-constraints (\ (constraints)
+  (&
+   width
+    (% (.width constraints)
+     (bounded b) (| bounded (& min 0. max (.max b)))
+     (unbounded b) (| unbounded (& min 0.)))
+   height
+    (% (.height constraints)
+     (bounded b) (| bounded (& min 0. max (.max b)))
+     (unbounded b) (| unbounded (& min 0.)))))
+ constraints-min-size (\ (constraints)
+  (&
+   width (% (.width constraints) (bounded b) (.min b) (unbounded b) (.min b))
+   height (% (.height constraints) (bounded b) (.min b) (unbounded b) (.min b))
+   ))
+
+ clamp (\ (number lo hi) (f-min hi (f-max lo number)))
+ clamp-size (\ (size constraints) (:
+  w (.width size)
+  h (.height size)
+  (&
+   width
+    (% (.width constraints)
+     (bounded b) (clamp w (.min b) (.max b))
+     (unbounded u) (f-max w (.min u)))
+   height
+    (% (.height constraints)
+     (bounded b) (clamp h (.min b) (.max b))
+     (unbounded u) (f-max h (.min u))))))
+
+ nothing-drawn (& width 0. height 0. draw (| nothing))
+
+
+ new-element (\ (widget-instance)
+  (&
+   widget (.widget widget-instance)
+   state ((.new (.widget widget-instance)) (.config widget-instance))))
+ element-render (\ (element) ((.render (.widget element)) (.state element)))
+ element-new-constraints (\ (element constraints)
+  (&
+   widget (.widget element)
+   state ((.new-constraints (.widget element)) (.state element) constraints)))
+ element-mouse-clicked (\ (element where)
+  (% ((.mouse-clicked (.widget element)) (.state element) where)
+   not-handled (| not-handled)
+   (handled new-state) (| handled (& widget (.widget element) state new-state))
+   (message message) (| message message)))
+ element-handle (\ (element event)
+  (&
+   widget (.widget element)
+   state ((.handle (.widget element)) (.state element) event)))
+
+ empty-widget (&
+  new (\ (_) (& width 0. height 0.))
+  render (\ (size) (& size size draw (| nothing)))
+  new-constraints (\ (_ constraints) (constraints-min-size constraints))
+  mouse-clicked (\ (state where) (| not-handled))
+  )
+ empty (& config nil widget empty-widget)
+
+ text-widget (&
+  new (\ (string) (:
+   drawn-text (text-wrapped string black 100.)
+   (& string string drawn (& size (& width (.width drawn-text) height (.height drawn-text)) draw (.draw drawn-text)))))
+  render (\ (state) (.drawn state))
+  new-constraints (\ (state constraints) (:
+   string (.string state)
+   drawn-text
+    (text-wrapped
+     string
+     black
+     (% (.width constraints) (bounded b) (.max b) unbounded 100.))
+   (&
+    string string
+    drawn (&
+     size
+      (clamp-size
+       (& width (.width drawn-text) height (.height drawn-text))
+       constraints)
+     draw (.draw drawn-text)))))
+  mouse-clicked (\ (state where) (| not-handled))
+  )
+ text (\ (string) (& config string widget text-widget))
+
+ colored-widget (&
+  new (\ (config) (& color (.color config) child (new-element (.child config))))
+  render (\ (state) (:
+   rendered-child (element-render (.child state))
+   size (.size rendered-child)
+   width (.width size)
+   height (.height size)
+   colored-rectangle
+    (| fill-path (&
+     path ([]
+      (| move-to (& x 0. y 0.))
+      (| line-to (& x width y 0.))
+      (| line-to (& x width y height))
+      (| line-to (& x 0. y height)))
+     color (.color state)))
+   (& size size draw (| all ([] colored-rectangle (.draw rendered-child))))))
+  new-constraints (\ (state constraints)
+   (&
+    color (.color state)
+    child (element-new-constraints (.child state) constraints)))
+  mouse-clicked (\ (state where)
+   (% (element-mouse-clicked (.child state) where)
+    not-handled (| not-handled)
+    (handled new-child) (| handled (& color (.color state) child new-child))
+    (message message) (| message message)))
+  )
+ colored (\ (color child)
+  (& config (& color color child child) widget colored-widget))
+
+ align-widget (&
+  new (\ (config)
+   (&
+    horizontal (.horizontal config)
+    vertical (.vertical config)
+    constraints (tight-constraints (& width 0. height 0.))
+    child (new-element (.child config))))
+  render (\ (state) (:
+   rendered-child (element-render (.child state))
+   child-size (.size rendered-child)
+   child-width (.width child-size)
+   child-height (.height child-size)
+   our-width (% (.width (.constraints state)) (bounded b) (.max b) unbounded child-width)
+   our-height (% (.height (.constraints state)) (bounded b) (.max b) unbounded child-height)
+   (&
+    size (& width our-width height our-height)
+    draw
+     (| transform
+      (&
+       by
+        (transform-translate
+         (f* (.horizontal state) (f- our-width child-width))
+         (f* (.vertical state) (f- our-height child-height)))
+       what (.draw rendered-child)))
+       )))
+  new-constraints (\ (state constraints)
+   (&
+    horizontal (.horizontal state)
+    vertical (.vertical state)
+    constraints constraints
+    child
+     (element-new-constraints
+      (.child state)
+      (loosen-min-constraints constraints))))
+  mouse-clicked (\ (state where) (:
+   rendered-child (element-render (.child state))
+   child-size (.size rendered-child)
+   child-width (.width child-size)
+   child-height (.height child-size)
+   our-width (% (.width (.constraints state)) (bounded b) (.max b) unbounded child-width)
+   our-height (% (.height (.constraints state)) (bounded b) (.max b) unbounded child-height)
+   child-mouse-x (f- (.x where) (f* (.horizontal state) (f- our-width child-width)))
+   child-mouse-y (f- (.y where) (f* (.vertical state) (f- our-height child-height)))
+   child-clicked (and-4 (f>= child-mouse-x 0.) (f< child-mouse-x child-width) (f>= child-mouse-y 0.) (f< child-mouse-y child-height))
+   (% child-clicked
+    false (| not-handled)
+    true
+     (%
+      (element-mouse-clicked (.child state) (& x child-mouse-x y child-mouse-y))
+      not-handled (| not-handled)
+      (handled new-element)
+       (| handled
+        (&
+         horizontal (.horizontal state)
+         vertical (.vertical state)
+         constraints (.constraints state)
+         child new-element))
+      (message message) (| message message)))
+   ))
+  )
+ align (\ (horizontal vertical child)
+  (&
+   config (& horizontal horizontal vertical vertical child child)
+   widget align-widget))
+ center (\ (child) (align 0.5 0.5 child))
+
+ stateful-widget (&
+  new (\ (config)
+   (&
+    state (.initial config)
+    update (.update config)
+    builder (.builder config)
+    child (new-element ((.builder config) (.initial config)))
+    constraints (tight-constraints (& width 0. height 0.))))
+  render (\ (state) (element-render (.child state)))
+  new-constraints (\ (state constraints)
+   (&
+    state (.state state)
+    update (.update state)
+    builder (.builder state)
+    child (element-new-constraints (.child state) constraints)
+    constraints constraints))
+  mouse-clicked (\ (state where)
+   (% (element-mouse-clicked (.child state) where)
+    not-handled (| not-handled)
+    (handled new-element)
+     (| handled
+      (&
+       state (.state state)
+       update (.update state)
+       builder (.builder state)
+       child new-element
+       constraints (.constraints state)))
+    (message message) (:
+     new-state ((.update state) (.state state) message)
+     new-child (element-new-constraints (new-element ((.builder state) new-state)) (.constraints state))
+     (| handled
+      (&
+       state new-state
+       update (.update state)
+       builder (.builder state)
+       child new-child
+       constraints (.constraints state)))
+    )
+   )
+  )
+  )
+ stateful (\ (initial update builder)
+  (&
+   config (& initial initial update update builder builder)
+   widget stateful-widget))
+
+ on-click-widget (&
+  new (\ (config) (& message (.message config) child (new-element (.child config))))
+  render (\ (state) (element-render (.child state)))
+  new-constraints (\ (state constraints)
+   (&
+    message (.message state)
+    child (element-new-constraints (.child state) constraints)))
+  mouse-clicked (\ (state where)
+   (% (element-mouse-clicked (.child state) where)
+    not-handled (| message (.message state))
+    (handled new-child) (| handled (& message (.message state) child new-child))
+    (message message) (| message message)))
+  )
+ on-click (\ (message child)
+  (& config (& message message child child) widget on-click-widget))
+
+ row-widget (&
+  new (\ (children)
+   (&
+    children
+     (iter->array
+      (map (array->iter children) (\ (child) (new-element child))))
+    constraints (tight-constraints (& width 0. height 0.))))
+  render (\ (state) (:
+   rendered-children
+    (iter->array (map (array->iter (.children state)) element-render))
+   layout
+    (rec-2 (array->list rendered-children) 0. (\ (rec children x)
+     (% children
+      empty (& draws (| empty) width 0. height 0.)
+      (more m) (:
+       child (.item m)
+       child-size (.size child)
+       child-width (.width child-size)
+       child-height (.height child-size)
+       rest (rec (.rest m) (f+ x child-width))
+       (&
+        draws
+         (| more (&
+          item
+           (| transform (&
+            by (transform-translate x 0.)
+            what (.draw child)))
+          rest (.draws rest)))
+        width (f+ child-width (.width rest))
+        height (f-max child-height (.height rest)))))))
+   (&
+    size
+     (clamp-size
+      (& width (.width layout) height (.height layout))
+      (.constraints state))
+    draw (| all (list->array (.draws layout)))
+   )))
+  new-constraints (\ (state constraints)
+   (:
+    loose (loosen-min-constraints constraints)
+    child-constraints
+     (& width (| unbounded (& min 0.)) height (.height loose))
+    (&
+     children
+      (iter->array
+       (map
+        (array->iter (.children state))
+        (\ (child) (element-new-constraints child child-constraints))))
+     constraints constraints)))
+  mouse-clicked (\ (state where)
+   (rec-2 0 0. (\ (rec index x)
+    (if (= index (array-length (.children state)))
+     (| not-handled)
+     (:
+      child (array-get (.children state) index)
+      child-size (.size (element-render child))
+      child-width (.width child-size)
+      child-height (.height child-size)
+      inside?
+       (and-4
+        (f>= (.x where) x)
+        (f< (.x where) (f+ x child-width))
+        (f>= (.y where) 0.)
+        (f< (.y where) child-height))
+      (if inside?
+       (%
+        (element-mouse-clicked
+         child
+         (& x (f- (.x where) x) y (.y where)))
+        not-handled (| not-handled)
+        (handled new-child)
+         (| handled
+          (&
+           children (array-update (.children state) index new-child)
+           constraints (.constraints state)))
+        (message message) (| message message))
+       (rec (+ index 1) (f+ x child-width))))))))
+ )
+ row (\ (children) (& config children widget row-widget))
+
+ run-app (\ (widget)
+  (rec (new-element widget) (\ (me element)
+   (&
+    handle (\ (event)
+     (% event
+      (window-resized size)
+       (| app (me (element-new-constraints element (tight-constraints size))))
+      (mouse-clicked where)
+       (% (element-mouse-clicked element where)
+        not-handled (| app (me element))
+        (handled new-element) (| app (me new-element))
+        (message message) (crash "unhandled message"))
+      _ (crash event)
+      ))
+    render (\ () (.draw (element-render element)))
+    ))))
+
+ _ (\ (initial) (run-app
+  (center (colored yellow (text "Alles Gute zum Geburtstag!")))))
+
+ (\ (initial)
+  (run-app
+   (stateful 0
+    (\ (counter message)
+     (% message
+      increment (+ counter 1)
+      decrement (- counter 1)))
+    (\ (counter)
+     (row ([]
+      (on-click (| decrement) (colored yellow (text "decrement")))
+      (text (int->string counter))
+      (on-click (| increment) (colored yellow (text "increment")))
+      ))))))
 )
 
 ===

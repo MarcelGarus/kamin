@@ -147,9 +147,11 @@ event_queue: ArrayList(Event),
 pub const Event = union(enum) {
     char_entered: CharEntered,
     key_pressed: KeyPressed,
+    mouse_clicked: MouseClicked,
 
     pub const CharEntered = struct { codepoint: usize };
     pub const KeyPressed = struct { keycode: usize, control: bool, alt: bool, shift: bool };
+    pub const MouseClicked = Position;
 };
 
 fn glfwErrorCallback(error_code: c_int, description: [*c]const u8) callconv(.c) void {
@@ -181,6 +183,7 @@ pub fn init(ally: Ally) !*Graphics {
     if (window == null) return error.WindowCreationFailed;
     _ = gl.glfwSetCharCallback(window, charCallback);
     _ = gl.glfwSetKeyCallback(window, keyCallback);
+    _ = gl.glfwSetMouseButtonCallback(window, mouseButtonCallback);
     gl.glfwMakeContextCurrent(window);
     if (gl.gladLoadGL() == 0) return error.GLADInitFailed;
     gl.glfwSwapInterval(1);
@@ -220,6 +223,16 @@ fn keyCallback(window: ?*gl.GLFWwindow, key: c_int, scancode: c_int, action: c_i
             },
         }) catch @panic("couldn't append event");
     }
+}
+
+fn mouseButtonCallback(window: ?*gl.GLFWwindow, button: c_int, action: c_int, mods: c_int) callconv(.c) void {
+    _ = mods;
+    if (button != gl.GLFW_MOUSE_BUTTON_LEFT or action != gl.GLFW_PRESS) return;
+
+    const graphics: *Graphics = @ptrCast(@alignCast(gl.glfwGetWindowUserPointer(window)));
+    graphics.event_queue.append(graphics.ally, .{
+        .mouse_clicked = graphics.get_mouse_pos(),
+    }) catch @panic("couldn't append event");
 }
 
 pub fn deinit(self: *Graphics) void {

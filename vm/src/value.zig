@@ -213,7 +213,7 @@ pub fn call(function: Value, vm: anytype, args: []const Value) !Value {
     return switch (result) {
         .returned => |obj| .{ .obj = obj },
         .crashed => |e| {
-            std.debug.print("\nUncaught crash from a Value.call:\n{f}\n", .{e});
+            std.debug.print("\nUncaught crash from a Value.call:\n{f}\n", .{Value.from(e)});
             std.process.exit(1);
         },
         .out_of_fuel => @panic("ran out of fuel (top-level Value.call)"),

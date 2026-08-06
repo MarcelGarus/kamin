@@ -109,6 +109,7 @@ const AppEvent = union(enum) {
     window_resized: Graphics.Size,
     key_pressed: Graphics.Event.KeyPressed,
     char_entered: Graphics.Event.CharEntered,
+    mouse_clicked: Graphics.Event.MouseClicked,
     task_finished: *Task,
 };
 
@@ -159,6 +160,10 @@ fn event_to_value(heap: *Heap, event: AppEvent) !Value {
             .shift = try Value.new_bool(heap, key.shift),
             .alt = try Value.new_bool(heap, key.alt),
         })),
+        .mouse_clicked => |position| try Value.new_enum(heap, "mouse-clicked", try Value.new_struct(heap, .{
+            .x = try Value.new_float(heap, position.x),
+            .y = try Value.new_float(heap, position.y),
+        })),
         .window_resized => |size| try Value.new_enum(heap, "window-resized", try Value.new_struct(heap, .{
             .width = try Value.new_float(heap, size.width),
             .height = try Value.new_float(heap, size.height),
@@ -193,11 +198,12 @@ pub fn run(ally: Ally, io: Io, heap: *Heap, vm: anytype, app_: Value, data_file:
     while (!gfx.should_close()) {
         // Add events to our queue:
 
-        // Add key events.
+        // Add graphics events.
         for (gfx.event_queue.items) |event| {
             queue.push(switch (event) {
                 .char_entered => |char| .{ .char_entered = char },
                 .key_pressed => |key| .{ .key_pressed = key },
+                .mouse_clicked => |position| .{ .mouse_clicked = position },
             });
         }
         gfx.event_queue.clearRetainingCapacity();
