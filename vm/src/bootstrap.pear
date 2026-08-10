@@ -3068,8 +3068,8 @@
   (& config <parameters> widget <abstract text-widget>)).
 
   Here's what the widget functions do:
-  - new: Takes a configuration and returns a state. The framework calls it to
-    create a new element (& widget ... state ...).
+  - new: Takes a configuration and returns a state. The framework bundles that
+    state up into an element.
   - render: Takes a state and renders it to (& size ... draw ...).
   - new-constraints: Takes a state and constraints and returns a new state.
   - mouse-clicked: Takes a state and position and returns either:
@@ -3079,6 +3079,20 @@
     - (| message ...) to indicate that the click was handled and the message
       should be passed up the tree to some element which handles it
       TODO: how do messages bubble up the tree?
+
+  Elements have this shape:
+  (&
+   widget <the abstract widget>
+   state ...
+   constraints <the constraints last given to the element>
+   drawing <the last rendered version of the widget>
+   )
+  Note that this already includes enough information to cache most widget trees:
+  If a widget is given new constraints, but they are the same as the old ones,
+  we don't need to tell it. Similarly, instead of rendering the widget, by
+  keeping the rendered drawing up-to-date after every information that flows
+  into the widget, we can cache successive renderings.
+  This way, for example, scrolling a list may re-render the child,
  "
 
  _ "Constraints"
@@ -3120,24 +3134,36 @@
  nothing-drawn (& width 0. height 0. draw (| nothing))
 
 
+ make-element (\ (widget state constraints)
+  (&
+   widget widget
+   state state
+   constraints constraints
+   drawing ((.render widget) state)))
+ element-with-state (\ (element state)
+  (make-element (.widget element) state (.constraints element)))
  new-element (\ (widget-instance)
-  (&
+  (:
    widget (.widget widget-instance)
-   state ((.new (.widget widget-instance)) (.config widget-instance))))
- element-render (\ (element) ((.render (.widget element)) (.state element)))
+   state ((.new widget) (.config widget-instance))
+   constraints (tight-constraints (& width 0. height 0.))
+   (make-element widget state constraints)))
+ element-render (\ (element) (.drawing element))
  element-new-constraints (\ (element constraints)
-  (&
-   widget (.widget element)
-   state ((.new-constraints (.widget element)) (.state element) constraints)))
+  (if (= constraints (.constraints element))
+   element
+   (:
+    state ((.new-constraints (.widget element)) (.state element) constraints)
+    (make-element (.widget element) state constraints))))
  element-mouse-clicked (\ (element where)
   (% ((.mouse-clicked (.widget element)) (.state element) where)
    not-handled (| not-handled)
-   (handled new-state) (| handled (& widget (.widget element) state new-state))
+   (handled new-state) (| handled (element-with-state element new-state))
    (message message) (| message message)))
  element-handle (\ (element event)
-  (&
-   widget (.widget element)
-   state ((.handle (.widget element)) (.state element) event)))
+  (element-with-state
+   element
+   ((.handle (.widget element)) (.state element) event)))
 
  empty-widget (&
   new (\ (_) (& width 0. height 0.))
